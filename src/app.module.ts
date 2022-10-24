@@ -19,11 +19,11 @@ import { UserIngredients } from './ingredients/user-ingredients.model';
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: process.env.POSTGRESS_HOST,
-      port: Number(process.env.POSTGRESS_PORT),
-      username: process.env.POSRTGRESS_USER,
-      password: process.env.POSRTGRESS_PASSWORD,
-      database: process.env.POSRTGRESS_DB,
+      host: process.env.POSTGRES_HOST,
+      port: Number(process.env.POSTGRES_PORT),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       models: [
         Cocktails,
         Users,
