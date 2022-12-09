@@ -1,10 +1,4 @@
-import {
-  Model,
-  DataType,
-  Table,
-  Column,
-  BelongsToMany,
-} from 'sequelize-typescript';
+import { Model, DataType, Table, Column, BelongsToMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserCocktails } from './user-cocktails.model';
 import { Users } from '../users/users.model';

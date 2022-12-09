@@ -6,13 +6,18 @@ interface IngredientCocktail {
 }
 
 export class CreateCocktailDto {
-  @ApiProperty({ example: '{"en":"Screw","ru":"Отвертка"}' })
+  @ApiProperty({ example: { en: 'Screw', ru: 'Отвертка' } })
   readonly name: string;
 
-  @ApiProperty({ example: '{"en":"Famous cocktail","ru":"Известный коктейль"}' })
+  @ApiProperty({ example: { en: 'Famous cocktail', ru: 'Известный коктейль' } })
   readonly description: string;
 
-  @ApiProperty({ example: '{"en":{1:"",2:""},"ru":{1:"",2:""}}' })
+  @ApiProperty({
+    example: {
+      en: { 1: 'Fill collins with ice cubes to the top', 2: 'Pour 50 ml of vodka' },
+      ru: { 1: 'Наполни коллинз кубиками льда доверху', 2: 'Налей водку 50 мл' },
+    },
+  })
   readonly recipe: string;
 
   @ApiProperty({ example: 'https://iasd3efk.images.com' })
