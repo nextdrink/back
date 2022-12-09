@@ -28,16 +28,21 @@ export class Cocktails extends Model<Cocktails, CocktailCreationAttr> {
   })
   id: number;
 
-  @ApiProperty({ example: '{"en":"Screw","ru":"Отвертка"}' })
+  @ApiProperty({ example: { en: 'Screw', ua: 'Викрутка' } })
   @Column({ type: DataType.JSONB, unique: true, allowNull: false })
   name: string;
 
-  @ApiProperty({ example: '{"en":"Famous cocktail","ru":"Известный коктейль"}' })
-  @Column({ type: DataType.JSONB })
+  @ApiProperty({ example: { en: 'Famous cocktail', ua: 'Відомий коктейль' } })
+  @Column({ type: DataType.JSONB, allowNull: false })
   description: string;
 
-  @ApiProperty({ example: '{"en":{1:"",2:""},"ru":{1:"",2:""}}' })
-  @Column({ type: DataType.JSONB })
+  @ApiProperty({
+    example: {
+      en: { 1: 'Fill collins with ice cubes to the top', 2: 'Pour 50 ml of vodka' },
+      ua: { 1: 'Наповни колінз кубиками льоду догори', 2: 'Налий горілку 50 мл' },
+    },
+  })
+  @Column({ type: DataType.JSONB, allowNull: false })
   recipe: string;
 
   @ApiProperty({ example: 'https://iasd3efk.images.com' })

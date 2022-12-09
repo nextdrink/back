@@ -25,11 +25,16 @@ export class Ingredients extends Model<Ingredients, IngredientCreationAttr> {
   })
   id: number;
 
-  @ApiProperty({ example: '{"en":"Screw","ru":"Отвертка"}' })
+  @ApiProperty({ example: { en: 'Vodka', ua: 'Горілка' } })
   @Column({ type: DataType.JSONB, unique: true, allowNull: false })
   name: string;
 
-  @ApiProperty({ example: '{"en":"Short history of ingredient","ru":"Отвертка"}' })
+  @ApiProperty({
+    example: {
+      en: 'A strong alcoholic drink made from purified spirit',
+      ua: 'Міцний алкогольний напій з очищеного спирту',
+    },
+  })
   @Column({ type: DataType.JSONB })
   description: string;
 
@@ -39,14 +44,14 @@ export class Ingredients extends Model<Ingredients, IngredientCreationAttr> {
 
   @ApiProperty({ example: 'Alcohol' })
   @Column({ type: DataType.STRING, allowNull: false })
-  strength: string;
+  type: string;
 
-  @ApiProperty({ example: 'Cherry' })
-  @Column({ type: DataType.STRING, allowNull: false })
-  base: string;
+  // @ApiProperty({ example: 'Cherry' })
+  // @Column({ type: DataType.STRING, allowNull: false })
+  // base: string;
 
   @ApiProperty({ example: 'Bitter' })
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING })
   taste: string;
 
   @BelongsToMany(() => Cocktails, () => IngredientCocktails)

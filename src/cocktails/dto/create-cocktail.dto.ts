@@ -6,16 +6,16 @@ interface IngredientCocktail {
 }
 
 export class CreateCocktailDto {
-  @ApiProperty({ example: { en: 'Screw', ru: 'Отвертка' } })
+  @ApiProperty({ example: { en: 'Screw', ua: 'Викрутка' } })
   readonly name: string;
 
-  @ApiProperty({ example: { en: 'Famous cocktail', ru: 'Известный коктейль' } })
+  @ApiProperty({ example: { en: 'Famous cocktail', ua: 'Відомий коктейль' } })
   readonly description: string;
 
   @ApiProperty({
     example: {
       en: { 1: 'Fill collins with ice cubes to the top', 2: 'Pour 50 ml of vodka' },
-      ru: { 1: 'Наполни коллинз кубиками льда доверху', 2: 'Налей водку 50 мл' },
+      ua: { 1: 'Наповни колінз кубиками льоду догори', 2: 'Налий горілку 50 мл' },
     },
   })
   readonly recipe: string;
@@ -44,6 +44,11 @@ export class CreateCocktailDto {
   @ApiProperty({ example: 'Mix build' })
   readonly method: string;
 
-  @ApiProperty({ type: [{}] })
+  @ApiProperty({
+    example: [
+      { id: 1, amount: 50 },
+      { id: 2, amount: 150 },
+    ],
+  })
   ingredients: IngredientCocktail[];
 }
