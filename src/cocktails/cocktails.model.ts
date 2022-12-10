@@ -7,6 +7,8 @@ import { IngredientCocktails } from './ingredient-cocktails.model';
 
 interface CocktailCreationAttr {
   name: string;
+  description: string;
+  recipe: string;
   image: string;
   base: string;
   strength: string;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import sequelize from 'sequelize';
@@ -33,7 +34,16 @@ export class CocktailsService {
   async getAllCocktails(lang: string) {
     const nameLangParameter = `name.${lang}`;
     return await this.cocktailsRepository.findAll({
-      attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+      raw: true,
+      nest: true,
+      attributes: {
+        include: [
+          [sequelize.json(nameLangParameter), 'name'],
+          [sequelize.json(`description.${lang}`), 'description'],
+          [sequelize.json(`recipe.${lang}`), 'recipe'],
+        ],
+        exclude: ['id', 'createdAt', 'updatedAt'],
+      },
       where: {
         [nameLangParameter]: {
           [sequelize.Op.ne]: null,

@@ -17,12 +17,7 @@ export class CocktailsController {
   @ApiResponse({ status: 200, type: [Cocktails] })
   @Get()
   async getAll(@Param('lang') lang = defaultLang) {
-    // TODO refactor this shit
-    const cocktails = JSON.stringify(await this.cocktailsService.getAllCocktails(lang));
-
-    return JSON.parse(cocktails).map((cocktail) => {
-      return { ...cocktail, name: cocktail.name[lang] };
-    });
+    return this.cocktailsService.getAllCocktails(lang);
   }
 
   @ApiOperation({ summary: 'Get cocktail' })
