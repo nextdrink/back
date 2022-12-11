@@ -20,13 +20,7 @@ export class CocktailsService {
     const { ingredients } = dto;
     const cocktail = await this.cocktailsRepository.create(dto);
 
-    for (const { id, amount } of ingredients) {
-      const ingredient = await this.ingredientsRepository.getIngredientById(id);
-      if (ingredient) {
-        const ingredientCocktails = await cocktail.$add('ingredients', id);
-        await ingredientCocktails[0].update({ amount });
-      }
-    }
+    await addIngredientForCocktail(cocktail, ingredients);
 
     return cocktail;
   }
@@ -54,9 +48,10 @@ export class CocktailsService {
 
   async getCocktailById(id: number) {
     return await this.cocktailsRepository.findByPk(id, {
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: [
         {
-          // attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
           model: Ingredients,
           through: {
             attributes: ['amount'],
@@ -93,5 +88,30 @@ export class CocktailsService {
     result === 1 ? (info += 'removed') : (info += 'not found');
 
     return info;
+  }
+
+  async updateCocktail(id, data) {
+    const cocktail = await this.getCocktailById(id);
+    if (!cocktail) {
+      return `Cocktail with id ${id} not found, update canceled`;
+    }
+    for (const { id } of cocktail.ingredients) {
+      await cocktail.$remove('ingredients', id);
+    }
+    await this.addIngredientForCocktail(cocktail, data.ingredients);
+
+    await cocktail.update({ ...data }, { where: { id } });
+
+    return this.getCocktailById(id);
+  }
+
+  async addIngredientForCocktail(cocktail, ingredients) {
+    for (const { id, amount } of ingredients) {
+      const ingredient = await this.ingredientsRepository.getIngredientById(id);
+      if (ingredient) {
+        const ingredientCocktails = await cocktail.$add('ingredients', id);
+        await ingredientCocktails[0].update({ amount });
+      }
+    }
   }
 }
