@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Body, Delete, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Delete,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -36,10 +45,17 @@ export class CocktailsController {
     return this.cocktailsService.createCocktail(cocktailDto);
   }
 
-  @ApiOperation({ summary: 'Remove cocktails' })
+  @ApiOperation({ summary: 'Remove cocktail' })
   @ApiResponse({ status: 200, type: RemoveCocktailDto })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.cocktailsService.removeCocktail(id);
+  }
+
+  @ApiOperation({ summary: 'Edit cocktail' })
+  @ApiResponse({ status: 200, type: RemoveCocktailDto })
+  @Patch(':id')
+  edit(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
+    return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
 }
