@@ -6,36 +6,20 @@ import {
   Delete,
   Param,
   Patch,
-  UseGuards,
+  Response,
+  // UseGuards,
 } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cocktails } from './cocktails.model';
-import { RemoveCocktailDto } from './dto/remove-cocktail.dto';
-const languages = ['en', 'uk', 'ru'];
-const defaultLang = languages[0];
+import { DeleteCocktailDto, UpdateCocktailDto } from './dto/actions-cocktail.dto';
+import { languages, defaultLang } from '../constants';
 
 @ApiTags('Cocktails')
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
 export class CocktailsController {
   constructor(private cocktailsService: CocktailsService) {}
-
-  // @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Get all cocktails' })
-  @ApiResponse({ status: 200, type: [Cocktails] })
-  @Get()
-  async getAll(@Param('lang') lang = defaultLang) {
-    return this.cocktailsService.getAllCocktails(lang);
-  }
-
-  @ApiOperation({ summary: 'Get cocktail' })
-  @ApiResponse({ status: 200, type: Cocktails })
-  @Get(':id')
-  getCocktail(@Param('id') id, @Param('lang') lang = defaultLang) {
-    console.log(lang);
-    return this.cocktailsService.getCocktailById(id);
-  }
 
   // Admin routes bellow
   @ApiOperation({ summary: 'Create new cocktail' })
@@ -45,17 +29,48 @@ export class CocktailsController {
     return this.cocktailsService.createCocktail(cocktailDto);
   }
 
-  @ApiOperation({ summary: 'Remove cocktail' })
-  @ApiResponse({ status: 200, type: RemoveCocktailDto })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cocktailsService.removeCocktail(id);
+  // @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get all cocktails' })
+  @ApiResponse({ status: 200, type: [Cocktails] })
+  @Get()
+  getAll(@Param('lang') lang = defaultLang) {
+    return this.cocktailsService.getAllCocktails(lang);
   }
 
-  @ApiOperation({ summary: 'Edit cocktail' })
-  @ApiResponse({ status: 200, type: RemoveCocktailDto })
+  @ApiOperation({ summary: 'Get cocktail' })
+  @ApiResponse({ status: 200, type: Cocktails })
+  @Get(':id')
+  async getCocktail(@Param('id') id, @Param('lang') lang = defaultLang, @Response() res) {
+    const cocktail = await this.cocktailsService.getCocktailById(id);
+    const { name, description, recipe, ingredients } = cocktail;
+
+    const ingredientsOneLang = ingredients.map((ingredient) => {
+      const { name, description } = ingredient;
+      return { ...ingredient, name: name[lang], description: description[lang] };
+    });
+
+    const cocktailOneLang = {
+      ...cocktail,
+      name: name[lang],
+      description: description[lang],
+      recipe: recipe[lang],
+      ingredients: ingredientsOneLang,
+    };
+
+    return res.json(cocktailOneLang);
+  }
+
+  @ApiOperation({ summary: 'Update cocktail' })
+  @ApiResponse({ status: 200, type: UpdateCocktailDto })
   @Patch(':id')
-  edit(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
+  update(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
+  }
+
+  @ApiOperation({ summary: 'Delete cocktail' })
+  @ApiResponse({ status: 200, type: DeleteCocktailDto })
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.cocktailsService.deleteCocktail(id);
   }
 }

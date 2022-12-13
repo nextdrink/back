@@ -19,7 +19,6 @@ export class UsersController {
 
   @Post('/addCocktail')
   addFavoriteCocktail(@Body() dto: AddFavoriteCocktailDto) {
-    console.log('asdfasdf');
     return this.usersService.addCocktail(dto);
   }
 

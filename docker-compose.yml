@@ -26,7 +26,4 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - 5432:5432
-#    volumes:
-#      - pgdata:/var/lib/postgresql/data
-#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
