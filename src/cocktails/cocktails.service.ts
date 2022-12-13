@@ -17,19 +17,17 @@ export class CocktailsService {
   ) {}
 
   async createCocktail(dto: CreateCocktailDto) {
-    const { ingredients } = dto;
     const cocktail = await this.cocktailsRepository.create(dto);
 
-    await addIngredientForCocktail(cocktail, ingredients);
+    const { ingredients } = dto;
+    await this.addIngredientForCocktail(cocktail, ingredients);
 
-    return cocktail;
+    return this.getCocktailById(cocktail.id);
   }
 
   async getAllCocktails(lang: string) {
     const nameLangParameter = `name.${lang}`;
     return await this.cocktailsRepository.findAll({
-      raw: true,
-      nest: true,
       attributes: {
         include: [
           [sequelize.json(nameLangParameter), 'name'],
@@ -47,7 +45,7 @@ export class CocktailsService {
   }
 
   async getCocktailById(id: number) {
-    return await this.cocktailsRepository.findByPk(id, {
+    const cock = await this.cocktailsRepository.findByPk(id, {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: [
         {
@@ -60,6 +58,7 @@ export class CocktailsService {
         },
       ],
     });
+    return cock.toJSON();
   }
 
   async getCocktailsByUserId(id: number) {
@@ -82,10 +81,10 @@ export class CocktailsService {
   //   return cocktails;
   // }
 
-  async removeCocktail(id) {
+  async deleteCocktail(id) {
     const result = await this.cocktailsRepository.destroy({ where: { id } });
     let info = `Cocktail with id ${id} `;
-    result === 1 ? (info += 'removed') : (info += 'not found');
+    result === 1 ? (info += 'deleted') : (info += 'not found');
 
     return info;
   }
