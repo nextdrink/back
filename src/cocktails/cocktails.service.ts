@@ -7,6 +7,7 @@ import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { Users } from '../users/users.model';
 import { Ingredients } from '../ingredients/ingredients.model';
 import { IngredientsService } from '../ingredients/ingredients.service';
+import { AddIngredientDto } from '../users/dto/add-ingredient.dto';
 
 @Injectable()
 export class CocktailsService {
@@ -34,7 +35,7 @@ export class CocktailsService {
           [sequelize.json(`description.${lang}`), 'description'],
           [sequelize.json(`recipe.${lang}`), 'recipe'],
         ],
-        exclude: ['id', 'createdAt', 'updatedAt'],
+        exclude: ['createdAt', 'updatedAt'],
       },
       where: {
         [nameLangParameter]: {
@@ -61,25 +62,25 @@ export class CocktailsService {
     return cock.toJSON();
   }
 
-  async getCocktailsByUserId(id: number) {
-    const cocktails = await this.cocktailsRepository.findAll({
+  async getCocktailsByUserId(id: number, lang) {
+    return await this.cocktailsRepository.findAll({
+      attributes: {
+        include: [
+          [sequelize.json(`name.${lang}`), 'name'],
+          [sequelize.json(`description.${lang}`), 'description'],
+          [sequelize.json(`recipe.${lang}`), 'recipe'],
+        ],
+        exclude: ['id', 'createdAt', 'updatedAt'],
+      },
       include: {
         model: Users,
         where: { id },
+        through: {
+          attributes: [],
+        },
       },
     });
-    return cocktails;
   }
-
-  // async getAllCocktailsByIngredientId(id: number) {
-  //   const cocktails = await this.cocktailsRepository.findAll({
-  //     include: {
-  //       model: Ingredients,
-  //       where: { id },
-  //     },
-  //   });
-  //   return cocktails;
-  // }
 
   async deleteCocktail(id) {
     const result = await this.cocktailsRepository.destroy({ where: { id } });
@@ -112,5 +113,23 @@ export class CocktailsService {
         await ingredientCocktails[0].update({ amount });
       }
     }
+  }
+
+  async myBar(userId, lang) {
+    const ingredientIds = await this.ingredientsRepository.getIngredientIdsByUserId(userId);
+
+    const myCocktails = await this.cocktailsRepository.sequelize.query(
+      `select c.id, c.name->'${lang}' as name, c.img
+        from cocktails c
+        join ingredient_cocktails ic on c.id = ic."cocktailId" 
+        where "ingredientId" IN (${ingredientIds.join()})
+        group by c.id
+        having count(*) = (
+          select count(*)
+          from ingredient_cocktails
+          where "cocktailId" = c.id
+        )`,
+    );
+    return myCocktails[0];
   }
 }

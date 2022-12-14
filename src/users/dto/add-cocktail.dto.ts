@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddFavoriteCocktailDto {
+export class AddCocktailDto {
   @ApiProperty({ example: 1 })
   readonly userId: number;
 

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Users } from './users.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CocktailsService } from '../cocktails/cocktails.service';
-import { AddFavoriteCocktailDto } from './dto/add-favorite-cocktail.dto';
+import { AddCocktailDto } from './dto/add-cocktail.dto';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { AddIngredientDto } from './dto/add-ingredient.dto';
 
@@ -24,14 +24,25 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { email } });
   }
 
-  // TODO remove "favorite" word
-  async addCocktail(dto: AddFavoriteCocktailDto) {
+  async addCocktail(dto: AddCocktailDto) {
     const { userId, cocktailId } = dto;
     const user = await this.usersRepository.findByPk(userId);
     const cocktail = await this.cocktailsRepository.getCocktailById(cocktailId);
 
     if (cocktail && user) {
       await user.$add('cocktails', cocktailId);
+      return dto;
+    }
+    throw new HttpException('User or cocktail not found', HttpStatus.NOT_FOUND);
+  }
+
+  async removeCocktail(dto: AddCocktailDto) {
+    const { userId, cocktailId } = dto;
+    const user = await this.usersRepository.findByPk(userId);
+    const cocktail = await this.cocktailsRepository.getCocktailById(cocktailId);
+
+    if (cocktail && user) {
+      await user.$remove('cocktails', cocktailId);
       return dto;
     }
     throw new HttpException('User or cocktail not found', HttpStatus.NOT_FOUND);
@@ -44,6 +55,18 @@ export class UsersService {
 
     if (user && ingredient) {
       await user.$add('ingredients', ingredientId);
+      return dto;
+    }
+    throw new HttpException('User or ingredient not found', HttpStatus.NOT_FOUND);
+  }
+
+  async removeIngredient(dto: AddIngredientDto) {
+    const { userId, ingredientId } = dto;
+    const user = await this.usersRepository.findByPk(userId);
+    const ingredient = await this.ingredientsRepository.getIngredientById(ingredientId);
+
+    if (user && ingredient) {
+      await user.$remove('ingredients', ingredientId);
       return dto;
     }
     throw new HttpException('User or ingredient not found', HttpStatus.NOT_FOUND);
