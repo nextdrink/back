@@ -1,10 +1,11 @@
 // @ts-nocheck
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import sequelize from 'sequelize';
 import { Ingredients } from './ingredients.model';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { Cocktails } from '../cocktails/cocktails.model';
-import sequelize from 'sequelize';
+import { Users } from '../users/users.model';
 
 @Injectable()
 export class IngredientsService {
@@ -38,6 +39,25 @@ export class IngredientsService {
     return await this.ingredientsRepository.findByPk(id);
   }
 
+  async getIngredientsByUserId(id: number, lang) {
+    return await this.ingredientsRepository.findAll({
+      attributes: {
+        include: [
+          [sequelize.json(`name.${lang}`), 'name'],
+          [sequelize.json(`description.${lang}`), 'description'],
+        ],
+        exclude: ['id', 'createdAt', 'updatedAt'],
+      },
+      include: {
+        model: Users,
+        where: { id },
+        through: {
+          attributes: [],
+        },
+      },
+    });
+  }
+
   async getAllIngredientInfo(id) {
     const ingredient = await this.ingredientsRepository.findByPk(id, {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
@@ -68,5 +88,21 @@ export class IngredientsService {
     result === 1 ? (info += 'deleted') : (info += 'not found');
 
     return info;
+  }
+
+  async getIngredientIdsByUserId(id) {
+    const ingredientIds = await this.ingredientsRepository.findAll({
+      raw: true,
+      attributes: ['id'],
+      include: {
+        model: Users,
+        where: { id },
+        attributes: [],
+        through: {
+          attributes: [],
+        },
+      },
+    });
+    return ingredientIds.map(({ id }) => id);
   }
 }
