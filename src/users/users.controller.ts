@@ -46,6 +46,6 @@ export class UsersController {
 
   @Post('/myBar')
   async myBar(@Body() dto: AddIngredientDto, @Param('lang') lang = defaultLang) {
-    return this.cocktailsRepository.myBar(dto.userId, lang);
+    return this.cocktailsRepository.getCocktailsFromMyIngredients(dto.userId, lang);
   }
 }

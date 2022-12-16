@@ -7,7 +7,6 @@ import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { Users } from '../users/users.model';
 import { Ingredients } from '../ingredients/ingredients.model';
 import { IngredientsService } from '../ingredients/ingredients.service';
-import { AddIngredientDto } from '../users/dto/add-ingredient.dto';
 
 @Injectable()
 export class CocktailsService {
@@ -29,14 +28,7 @@ export class CocktailsService {
   async getAllCocktails(lang: string) {
     const nameLangParameter = `name.${lang}`;
     return await this.cocktailsRepository.findAll({
-      attributes: {
-        include: [
-          [sequelize.json(nameLangParameter), 'name'],
-          [sequelize.json(`description.${lang}`), 'description'],
-          [sequelize.json(`recipe.${lang}`), 'recipe'],
-        ],
-        exclude: ['createdAt', 'updatedAt'],
-      },
+      attributes: ['id', [sequelize.json(nameLangParameter), 'name'], 'img'],
       where: {
         [nameLangParameter]: {
           [sequelize.Op.ne]: null,
@@ -115,7 +107,7 @@ export class CocktailsService {
     }
   }
 
-  async myBar(userId, lang) {
+  async getCocktailsFromMyIngredients(userId, lang) {
     const ingredientIds = await this.ingredientsRepository.getIngredientIdsByUserId(userId);
 
     const myCocktails = await this.cocktailsRepository.sequelize.query(
