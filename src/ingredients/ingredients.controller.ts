@@ -7,18 +7,24 @@ import {
   Delete,
   Patch,
   Response,
+  UseGuards,
 } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { Ingredients } from './ingredients.model';
-import { languages, defaultLang } from '../constants';
+import { languages, defaultLang, ROLES } from '../constants';
+import { JwtGuard } from '../auth/guards/jwt.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/roles-auth.decorator';
 
 @ApiTags('Ingredients')
 @Controller(`:lang(${languages.join('|')})?/ingredients`)
 export class IngredientsController {
   constructor(private ingredientsService: IngredientsService) {}
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new ingredient' })
   @ApiResponse({ status: 200, type: Ingredients })
   @Post()
@@ -55,6 +61,8 @@ export class IngredientsController {
     return res.json(ingredientOneLang);
   }
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update ingredient' })
   @ApiResponse({ status: 200, type: Ingredients })
   @Patch(':id')
@@ -62,6 +70,8 @@ export class IngredientsController {
     return this.ingredientsService.updateIngredient(id, ingredientDto);
   }
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete ingredient' })
   @ApiResponse({ status: 200, type: Ingredients })
   @Delete(':id')

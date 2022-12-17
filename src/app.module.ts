@@ -11,6 +11,9 @@ import { UserCocktails } from './cocktails/user-cocktails.model';
 import { Ingredients } from './ingredients/ingredients.model';
 import { IngredientCocktails } from './cocktails/ingredient-cocktails.model';
 import { UserIngredients } from './ingredients/user-ingredients.model';
+import { RolesModule } from './roles/roles.module';
+import { Roles } from './roles/roles.model';
+import { UserRoles } from './roles/user-roles.model';
 
 @Module({
   imports: [
@@ -31,6 +34,8 @@ import { UserIngredients } from './ingredients/user-ingredients.model';
         Ingredients,
         IngredientCocktails,
         UserIngredients,
+        Roles,
+        UserRoles,
       ],
       autoLoadModels: true,
     }),
@@ -38,6 +43,7 @@ import { UserIngredients } from './ingredients/user-ingredients.model';
     CocktailsModule,
     IngredientsModule,
     AuthModule,
+    RolesModule,
   ],
   providers: [],
 })
