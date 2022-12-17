@@ -7,21 +7,25 @@ import {
   Param,
   Patch,
   Response,
-  // UseGuards,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cocktails } from './cocktails.model';
 import { DeleteCocktailDto, UpdateCocktailDto } from './dto/actions-cocktail.dto';
-import { languages, defaultLang } from '../constants';
+import { languages, defaultLang, ROLES } from '../constants';
+import { JwtGuard } from '../auth/guards/jwt.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/roles-auth.decorator';
 
 @ApiTags('Cocktails')
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
 export class CocktailsController {
   constructor(private cocktailsService: CocktailsService) {}
 
-  // Admin routes bellow
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new cocktail' })
   @ApiResponse({ status: 200, type: Cocktails })
   @Post()
@@ -29,7 +33,6 @@ export class CocktailsController {
     return this.cocktailsService.createCocktail(cocktailDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all cocktails' })
   @ApiResponse({ status: 200, type: [Cocktails] })
   @Get()
@@ -60,6 +63,8 @@ export class CocktailsController {
     return res.json(cocktailOneLang);
   }
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update cocktail' })
   @ApiResponse({ status: 200, type: UpdateCocktailDto })
   @Patch(':id')
@@ -67,6 +72,8 @@ export class CocktailsController {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete cocktail' })
   @ApiResponse({ status: 200, type: DeleteCocktailDto })
   @Delete(':id')

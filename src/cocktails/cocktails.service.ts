@@ -109,6 +109,7 @@ export class CocktailsService {
 
   async getCocktailsFromMyIngredients(userId, lang) {
     const ingredientIds = await this.ingredientsRepository.getIngredientIdsByUserId(userId);
+    if (!ingredientIds.length) return [];
 
     const myCocktails = await this.cocktailsRepository.sequelize.query(
       `select c.id, c.name->'${lang}' as name, c.img

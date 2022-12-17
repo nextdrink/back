@@ -4,6 +4,8 @@ import { UserCocktails } from '../cocktails/user-cocktails.model';
 import { Cocktails } from '../cocktails/cocktails.model';
 import { UserIngredients } from '../ingredients/user-ingredients.model';
 import { Ingredients } from '../ingredients/ingredients.model';
+import { Roles } from '../roles/roles.model';
+import { UserRoles } from '../roles/user-roles.model';
 
 interface UserCreationAttr {
   email: string;
@@ -34,4 +36,7 @@ export class Users extends Model<Users, UserCreationAttr> {
 
   @BelongsToMany(() => Ingredients, () => UserIngredients)
   ingredients: Ingredients[];
+
+  @BelongsToMany(() => Roles, () => UserRoles)
+  roles: Roles[];
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CocktailsService } from './cocktails.service';
 import { CocktailsController } from './cocktails.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -8,19 +8,15 @@ import { Users } from '../users/users.model';
 import { Ingredients } from '../ingredients/ingredients.model';
 import { IngredientCocktails } from './ingredient-cocktails.model';
 import { IngredientsModule } from '../ingredients/ingredients.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   providers: [CocktailsService],
   controllers: [CocktailsController],
   imports: [
     IngredientsModule,
-    SequelizeModule.forFeature([
-      Cocktails,
-      Users,
-      UserCocktails,
-      Ingredients,
-      IngredientCocktails,
-    ]),
+    SequelizeModule.forFeature([Cocktails, Users, UserCocktails, Ingredients, IngredientCocktails]),
+    forwardRef(() => UsersModule),
   ],
   exports: [CocktailsService],
 })

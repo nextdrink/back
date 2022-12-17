@@ -6,6 +6,9 @@ import { CocktailsService } from '../cocktails/cocktails.service';
 import { AddCocktailDto } from './dto/add-cocktail.dto';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { AddIngredientDto } from './dto/add-ingredient.dto';
+import { RolesService } from '../roles/roles.service';
+import { Roles } from '../roles/roles.model';
+import { ROLES } from '../constants';
 
 @Injectable()
 export class UsersService {
@@ -14,14 +17,36 @@ export class UsersService {
     private usersRepository: typeof Users,
     private cocktailsRepository: CocktailsService,
     private ingredientsRepository: IngredientsService,
+    private rolesRepository: RolesService,
   ) {}
 
   async createUser(dto: CreateUserDto) {
-    return await this.usersRepository.create(dto);
+    const user = await this.usersRepository.create(dto);
+    const role = await this.rolesRepository.getRoleByValue(ROLES.USER);
+    await user.$set('roles', [role.id]);
+
+    return user;
+  }
+
+  async getAllUsers() {
+    return await this.usersRepository.findAll({
+      include: {
+        model: Roles,
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        through: {
+          attributes: [],
+        },
+      },
+    });
   }
 
   async getUserByEmail(email: string) {
     return await this.usersRepository.findOne({ where: { email } });
+  }
+
+  async getUserRolesById(id: number) {
+    const user = await this.usersRepository.findByPk(id, { include: { model: Roles } });
+    return user.toJSON().roles.map(({ value }) => value);
   }
 
   async addCocktail(dto: AddCocktailDto) {
