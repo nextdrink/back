@@ -28,7 +28,18 @@ export class CocktailsService {
   async getAllCocktails(lang: string) {
     const nameLangParameter = `name.${lang}`;
     return await this.cocktailsRepository.findAll({
-      attributes: ['id', [sequelize.json(nameLangParameter), 'name'], 'img'],
+      attributes: [
+        'id',
+        [sequelize.json(nameLangParameter), 'name'],
+        'img',
+        'strength',
+        'taste',
+        'base',
+        'group',
+        'series',
+        'color',
+        'method',
+      ],
       where: {
         [nameLangParameter]: {
           [sequelize.Op.ne]: null,
@@ -38,7 +49,7 @@ export class CocktailsService {
   }
 
   async getCocktailById(id: number) {
-    const cock = await this.cocktailsRepository.findByPk(id, {
+    const cocktail = await this.cocktailsRepository.findByPk(id, {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: [
         {
@@ -51,7 +62,7 @@ export class CocktailsService {
         },
       ],
     });
-    return cock.toJSON();
+    return cocktail?.toJSON();
   }
 
   async getCocktailsByUserId(id: number, lang) {
