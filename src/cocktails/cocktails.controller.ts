@@ -7,7 +7,7 @@ import {
   Param,
   Patch,
   Response,
-  UseGuards,
+  UseGuards, HttpStatus,
 } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
@@ -45,6 +45,10 @@ export class CocktailsController {
   @Get(':id')
   async getCocktail(@Param('id') id, @Param('lang') lang = defaultLang, @Response() res) {
     const cocktail = await this.cocktailsService.getCocktailById(id);
+    if (!cocktail) {
+      return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Cocktails with id ${id} not found`);
+    }
+
     const { name, description, recipe, ingredients } = cocktail;
 
     const ingredientsOneLang = ingredients.map((ingredient) => {
