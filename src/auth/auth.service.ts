@@ -10,7 +10,14 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
-    return this.generateToken(user);
+
+    const accessToken = await this.generateToken(user);
+    const roles = user.toJSON().roles.map(({ value }) => value);
+
+    return {
+      accessToken,
+      roles,
+    };
   }
 
   async registration(userDto: CreateUserDto) {
@@ -32,13 +39,11 @@ export class AuthService {
 
   private async generateToken(user) {
     const payload = { email: user.email, sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return this.jwtService.sign(payload);
   }
 
   async validateUser({ email, password }): Promise<any> {
-    const user = await this.usersService.getUserByEmail(email);
+    const user = await this.usersService.getUserWithRolesByEmail(email);
     if (user) {
       const passwordEquals = await bcrypt.compare(password, user.password);
       if (passwordEquals) return user;
