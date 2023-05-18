@@ -44,6 +44,10 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { email } });
   }
 
+  async getUserWithRolesByEmail(email: string) {
+    return await this.usersRepository.findOne({ where: { email }, include: { model: Roles } });
+  }
+
   async getUserRolesById(id: number) {
     const user = await this.usersRepository.findByPk(id, { include: { model: Roles } });
     return user.toJSON().roles.map(({ value }) => value);
