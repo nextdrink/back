@@ -9,9 +9,7 @@ import { Users } from '../users/users.model';
 
 @Injectable()
 export class IngredientsService {
-  constructor(
-    @InjectModel(Ingredients) private ingredientsRepository: typeof Ingredients,
-  ) {}
+  constructor(@InjectModel(Ingredients) private ingredientsRepository: typeof Ingredients) {}
 
   async createIngredient(dto: CreateIngredientDto) {
     return await this.ingredientsRepository.create(dto);

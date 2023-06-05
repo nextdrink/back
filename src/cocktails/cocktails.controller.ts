@@ -7,7 +7,8 @@ import {
   Param,
   Patch,
   Response,
-  UseGuards, HttpStatus,
+  UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
@@ -23,15 +24,6 @@ import { Roles } from '../auth/roles-auth.decorator';
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
 export class CocktailsController {
   constructor(private cocktailsService: CocktailsService) {}
-
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(ROLES.ADMIN)
-  @ApiOperation({ summary: 'Create new cocktail' })
-  @ApiResponse({ status: 200, type: Cocktails })
-  @Post()
-  create(@Body() cocktailDto: CreateCocktailDto) {
-    return this.cocktailsService.createCocktail(cocktailDto);
-  }
 
   @ApiOperation({ summary: 'Get all cocktails' })
   @ApiResponse({ status: 200, type: [Cocktails] })
@@ -69,9 +61,42 @@ export class CocktailsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Create new cocktail' })
+  @ApiResponse({ status: 200, type: Cocktails })
+  @Post('/admin')
+  create(@Body() cocktailDto: CreateCocktailDto) {
+    return this.cocktailsService.createCocktail(cocktailDto);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update cocktail' })
   @ApiResponse({ status: 200, type: UpdateCocktailDto })
-  @Patch(':id')
+  @Get('/admin/:id')
+  async get(@Param('id') id, @Response() res) {
+    const cocktail = await this.cocktailsService.getCocktailById(id);
+    if (!cocktail) {
+      return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Cocktails with id ${id} not found`);
+    }
+
+    // @ts-ignore
+    const ingredients = cocktail.ingredients.map(({ id, value: { amount } }) => {
+      return { id, amount };
+    });
+
+    const cocktailModifiedIngredients = {
+      ...cocktail,
+      ingredients,
+    };
+
+    return res.json(cocktailModifiedIngredients);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Update cocktail' })
+  @ApiResponse({ status: 200, type: UpdateCocktailDto })
+  @Patch('/admin/:id')
   update(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
@@ -80,7 +105,7 @@ export class CocktailsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete cocktail' })
   @ApiResponse({ status: 200, type: DeleteCocktailDto })
-  @Delete(':id')
+  @Delete('admin/:id')
   delete(@Param('id') id: string) {
     return this.cocktailsService.deleteCocktail(id);
   }

@@ -46,10 +46,6 @@ export class Ingredients extends Model<Ingredients, IngredientCreationAttr> {
   @Column({ type: DataType.STRING, allowNull: false })
   type: string;
 
-  // @ApiProperty({ example: 'Cherry' })
-  // @Column({ type: DataType.STRING, allowNull: false })
-  // base: string;
-
   @ApiProperty({ example: 'Bitter' })
   @Column({ type: DataType.STRING })
   taste: string;
