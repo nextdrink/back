@@ -70,7 +70,7 @@ export class CocktailsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
-  @ApiOperation({ summary: 'Update cocktail' })
+  @ApiOperation({ summary: 'Get a cocktail for editing in the admin panel' })
   @ApiResponse({ status: 200, type: UpdateCocktailDto })
   @Get('/admin/:id')
   async get(@Param('id') id, @Response() res) {
