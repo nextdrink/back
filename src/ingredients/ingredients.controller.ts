@@ -23,15 +23,6 @@ import { Roles } from '../auth/roles-auth.decorator';
 export class IngredientsController {
   constructor(private ingredientsService: IngredientsService) {}
 
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(ROLES.ADMIN)
-  @ApiOperation({ summary: 'Create new ingredient' })
-  @ApiResponse({ status: 200, type: Ingredients })
-  @Post()
-  create(@Body() ingredientDto: CreateIngredientDto) {
-    return this.ingredientsService.createIngredient(ingredientDto);
-  }
-
   @ApiOperation({ summary: 'Get all ingredients' })
   @ApiResponse({ status: 200, type: [Ingredients] })
   @Get()
@@ -41,7 +32,7 @@ export class IngredientsController {
 
   @ApiOperation({ summary: 'Get ingredient with all info' })
   @ApiResponse({ status: 200, type: Ingredients })
-  @Get(':id')
+  @Get('/:id')
   async getIngredient(@Param('id') id: string, @Param('lang') lang = defaultLang, @Response() res) {
     const ingredient = await this.ingredientsService.getAllIngredientInfo(id);
     const { name, description, cocktails } = ingredient;
@@ -63,9 +54,31 @@ export class IngredientsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Create new ingredient' })
+  @ApiResponse({ status: 200, type: Ingredients })
+  @Post('/admin')
+  create(@Body() ingredientDto: CreateIngredientDto) {
+    return this.ingredientsService.createIngredient(ingredientDto);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Get ingredients for admin section' })
+  @ApiResponse({ status: 200, type: Ingredients })
+  @Get('/admin/all')
+  async get() {
+    const ingredients = await this.ingredientsService.getAllIngredients(defaultLang);
+
+    return ingredients.map(({ id, name }) => {
+      return { id, name };
+    });
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update ingredient' })
   @ApiResponse({ status: 200, type: Ingredients })
-  @Patch(':id')
+  @Patch('/admin/:id')
   edit(@Param('id') id: string, @Body() ingredientDto: CreateIngredientDto) {
     return this.ingredientsService.updateIngredient(id, ingredientDto);
   }
@@ -74,7 +87,7 @@ export class IngredientsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete ingredient' })
   @ApiResponse({ status: 200, type: Ingredients })
-  @Delete(':id')
+  @Delete('/admin/:id')
   deleteIngredient(@Param('id') id: string) {
     return this.ingredientsService.deleteIngredient(id);
   }
