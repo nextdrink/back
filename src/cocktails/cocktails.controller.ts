@@ -61,11 +61,11 @@ export class CocktailsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
-  @ApiOperation({ summary: 'Create new cocktail' })
-  @ApiResponse({ status: 200, type: Cocktails })
-  @Post('/admin')
-  create(@Body() cocktailDto: CreateCocktailDto) {
-    return this.cocktailsService.createCocktail(cocktailDto);
+  @ApiOperation({ summary: 'Get a cocktail for editing in the admin panel' })
+  @ApiResponse({ status: 200, type: UpdateCocktailDto })
+  @Get('/admin/all')
+  async getAdminAll(@Param('lang') lang = defaultLang) {
+    return this.cocktailsService.getAllAdminCocktails(lang);
   }
 
   @UseGuards(JwtGuard, RolesGuard)
@@ -73,7 +73,7 @@ export class CocktailsController {
   @ApiOperation({ summary: 'Get a cocktail for editing in the admin panel' })
   @ApiResponse({ status: 200, type: UpdateCocktailDto })
   @Get('/admin/:id')
-  async get(@Param('id') id, @Response() res) {
+  async getAdminCocktail(@Param('id') id, @Response() res) {
     const cocktail = await this.cocktailsService.getCocktailById(id);
     if (!cocktail) {
       return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Cocktails with id ${id} not found`);
@@ -90,6 +90,15 @@ export class CocktailsController {
     };
 
     return res.json(cocktailModifiedIngredients);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Create new cocktail' })
+  @ApiResponse({ status: 200, type: Cocktails })
+  @Post('/admin')
+  create(@Body() cocktailDto: CreateCocktailDto) {
+    return this.cocktailsService.createCocktail(cocktailDto);
   }
 
   @UseGuards(JwtGuard, RolesGuard)

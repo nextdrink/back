@@ -48,6 +48,13 @@ export class CocktailsService {
     });
   }
 
+  async getAllAdminCocktails(lang: string) {
+    return await this.cocktailsRepository.findAll({
+      attributes: ['id', [sequelize.json(`name.${lang}`), 'name'], 'img'],
+      order: [['id', 'DESC']],
+    });
+  }
+
   async getCocktailById(id: number) {
     const cocktail = await this.cocktailsRepository.findByPk(id, {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
