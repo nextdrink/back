@@ -77,7 +77,9 @@ export class CocktailsController {
   @ApiOkResponse({ type: CreateCocktailDto })
   @Get('/admin/:id')
   async getAdminCocktail(@Param('id') id, @Response() res) {
-    const cocktail = await this.cocktailsService.getCocktailById(id);
+    const cocktailObjectDB = await this.cocktailsService.getCocktailById(id);
+    const cocktail = cocktailObjectDB?.toJSON();
+
     if (!cocktail) {
       return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Cocktails with id ${id} not found`);
     }
