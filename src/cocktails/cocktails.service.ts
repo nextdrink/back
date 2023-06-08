@@ -56,7 +56,7 @@ export class CocktailsService {
   }
 
   async getCocktailById(id: number) {
-    const cocktail = await this.cocktailsRepository.findByPk(id, {
+    return await this.cocktailsRepository.findByPk(id, {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: [
         {
@@ -69,7 +69,6 @@ export class CocktailsService {
         },
       ],
     });
-    return cocktail?.toJSON();
   }
 
   async getCocktailsByUserId(id: number, lang) {

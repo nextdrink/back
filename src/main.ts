@@ -7,10 +7,7 @@ async function start() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
 
-  const config = new DocumentBuilder()
-    .setTitle('Your private bar')
-    .setVersion('1.0.0')
-    .build();
+  const config = new DocumentBuilder().setTitle('Your private bar').setVersion('1.0.0').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, document);
 

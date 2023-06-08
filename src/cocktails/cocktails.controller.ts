@@ -5,7 +5,7 @@ import {
   Body,
   Delete,
   Param,
-  Patch,
+  Put,
   Response,
   UseGuards,
   HttpStatus,
@@ -37,7 +37,9 @@ export class CocktailsController {
   @ApiOkResponse({ type: Cocktails })
   @Get(':id')
   async getCocktail(@Param('id') id, @Param('lang') lang = defaultLang, @Response() res) {
-    const cocktail = await this.cocktailsService.getCocktailById(id);
+    const cocktailObjectDB = await this.cocktailsService.getCocktailById(id);
+    const cocktail = cocktailObjectDB?.toJSON();
+
     if (!cocktail) {
       return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Cocktails with id ${id} not found`);
     }
@@ -106,7 +108,7 @@ export class CocktailsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update cocktail' })
   @ApiOkResponse({ type: UpdateCocktailDto })
-  @Patch('/admin/:id')
+  @Put('/admin/:id')
   update(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
