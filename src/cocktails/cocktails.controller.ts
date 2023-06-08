@@ -12,13 +12,14 @@ import {
 } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Cocktails } from './cocktails.model';
 import { DeleteCocktailDto, UpdateCocktailDto } from './dto/actions-cocktail.dto';
 import { languages, defaultLang, ROLES } from '../constants';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
+import { GetAllAdminCocktailsDto } from './dto/get-all-admin-cocktails.dto';
 
 @ApiTags('Cocktails')
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
@@ -26,14 +27,14 @@ export class CocktailsController {
   constructor(private cocktailsService: CocktailsService) {}
 
   @ApiOperation({ summary: 'Get all cocktails' })
-  @ApiResponse({ status: 200, type: [Cocktails] })
+  @ApiOkResponse({ type: [Cocktails] })
   @Get()
   getAll(@Param('lang') lang = defaultLang) {
     return this.cocktailsService.getAllCocktails(lang);
   }
 
   @ApiOperation({ summary: 'Get cocktail' })
-  @ApiResponse({ status: 200, type: Cocktails })
+  @ApiOkResponse({ type: Cocktails })
   @Get(':id')
   async getCocktail(@Param('id') id, @Param('lang') lang = defaultLang, @Response() res) {
     const cocktail = await this.cocktailsService.getCocktailById(id);
@@ -61,19 +62,19 @@ export class CocktailsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
-  @ApiOperation({ summary: 'Create new cocktail' })
-  @ApiResponse({ status: 200, type: Cocktails })
-  @Post('/admin')
-  create(@Body() cocktailDto: CreateCocktailDto) {
-    return this.cocktailsService.createCocktail(cocktailDto);
+  @ApiOperation({ summary: 'Get all cocktails for the admin panel' })
+  @ApiOkResponse({ type: [GetAllAdminCocktailsDto] })
+  @Get('/admin/all')
+  async getAdminAll(@Param('lang') lang = defaultLang) {
+    return this.cocktailsService.getAllAdminCocktails(lang);
   }
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Get a cocktail for editing in the admin panel' })
-  @ApiResponse({ status: 200, type: UpdateCocktailDto })
+  @ApiOkResponse({ type: CreateCocktailDto })
   @Get('/admin/:id')
-  async get(@Param('id') id, @Response() res) {
+  async getAdminCocktail(@Param('id') id, @Response() res) {
     const cocktail = await this.cocktailsService.getCocktailById(id);
     if (!cocktail) {
       return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Cocktails with id ${id} not found`);
@@ -94,8 +95,17 @@ export class CocktailsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Create new cocktail' })
+  @ApiOkResponse({ type: Cocktails })
+  @Post('/admin')
+  create(@Body() cocktailDto: CreateCocktailDto) {
+    return this.cocktailsService.createCocktail(cocktailDto);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update cocktail' })
-  @ApiResponse({ status: 200, type: UpdateCocktailDto })
+  @ApiOkResponse({ type: UpdateCocktailDto })
   @Patch('/admin/:id')
   update(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
@@ -104,7 +114,7 @@ export class CocktailsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete cocktail' })
-  @ApiResponse({ status: 200, type: DeleteCocktailDto })
+  @ApiOkResponse({ type: DeleteCocktailDto })
   @Delete('admin/:id')
   delete(@Param('id') id: string) {
     return this.cocktailsService.deleteCocktail(id);
