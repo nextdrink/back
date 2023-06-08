@@ -61,7 +61,7 @@ export class CocktailsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
-  @ApiOperation({ summary: 'Get a cocktail for editing in the admin panel' })
+  @ApiOperation({ summary: 'Get al cocktails for the admin panel' })
   @ApiResponse({ status: 200, type: UpdateCocktailDto })
   @Get('/admin/all')
   async getAdminAll(@Param('lang') lang = defaultLang) {
