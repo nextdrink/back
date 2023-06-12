@@ -34,7 +34,9 @@ export class IngredientsService {
   }
 
   async getIngredientById(id: number) {
-    return await this.ingredientsRepository.findByPk(id);
+    return await this.ingredientsRepository.findByPk(id, {
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    });
   }
 
   async getIngredientsByUserId(id: number, lang) {

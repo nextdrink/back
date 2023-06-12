@@ -8,9 +8,10 @@ import {
   Patch,
   Response,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { Ingredients } from './ingredients.model';
 import { languages, defaultLang, ROLES } from '../constants';
@@ -24,14 +25,14 @@ export class IngredientsController {
   constructor(private ingredientsService: IngredientsService) {}
 
   @ApiOperation({ summary: 'Get all ingredients' })
-  @ApiResponse({ status: 200, type: [Ingredients] })
+  @ApiOkResponse({ type: [Ingredients] })
   @Get()
   getIngredients(@Param('lang') lang = defaultLang) {
     return this.ingredientsService.getAllIngredients(lang);
   }
 
   @ApiOperation({ summary: 'Get ingredient with all info' })
-  @ApiResponse({ status: 200, type: Ingredients })
+  @ApiOkResponse({ type: Ingredients })
   @Get('/:id')
   async getIngredient(@Param('id') id: string, @Param('lang') lang = defaultLang, @Response() res) {
     const ingredient = await this.ingredientsService.getAllIngredientInfo(id);
@@ -55,7 +56,7 @@ export class IngredientsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new ingredient' })
-  @ApiResponse({ status: 200, type: Ingredients })
+  @ApiOkResponse({ type: Ingredients })
   @Post('/admin')
   create(@Body() ingredientDto: CreateIngredientDto) {
     return this.ingredientsService.createIngredient(ingredientDto);
@@ -64,7 +65,7 @@ export class IngredientsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Get ingredients for admin section' })
-  @ApiResponse({ status: 200, type: Ingredients })
+  @ApiOkResponse({ type: [Ingredients] })
   @Get('/admin/all')
   async get() {
     const ingredients = await this.ingredientsService.getAllIngredients(defaultLang);
@@ -76,8 +77,23 @@ export class IngredientsController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
+  @ApiOperation({ summary: 'Get ingredient for admin section' })
+  @ApiOkResponse({ type: Ingredients })
+  @Get('/admin/:id')
+  async getAdminIngredient(@Param('id') id, @Response() res) {
+    const ingredient = await this.ingredientsService.getIngredientById(id);
+
+    if (!ingredient) {
+      return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send(`Ingredient with id ${id} not found`);
+    }
+
+    return res.json(ingredient);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update ingredient' })
-  @ApiResponse({ status: 200, type: Ingredients })
+  @ApiOkResponse({ type: Ingredients })
   @Patch('/admin/:id')
   edit(@Param('id') id: string, @Body() ingredientDto: CreateIngredientDto) {
     return this.ingredientsService.updateIngredient(id, ingredientDto);
@@ -86,7 +102,7 @@ export class IngredientsController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete ingredient' })
-  @ApiResponse({ status: 200, type: Ingredients })
+  @ApiOkResponse({ type: Ingredients })
   @Delete('/admin/:id')
   deleteIngredient(@Param('id') id: string) {
     return this.ingredientsService.deleteIngredient(id);
