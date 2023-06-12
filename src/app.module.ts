@@ -41,6 +41,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
       autoLoadModels: true,
       dialectOptions: {
         ssl: true,
+        rejectUnauthorized: false,
       },
     }),
     UsersModule,
