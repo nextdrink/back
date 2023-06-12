@@ -39,6 +39,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
         UserRoles,
       ],
       autoLoadModels: true,
+      ssl: true,
     }),
     UsersModule,
     CocktailsModule,
