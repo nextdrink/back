@@ -42,11 +42,15 @@ export class Ingredients extends Model<Ingredients, IngredientCreationAttr> {
   @Column({ type: DataType.STRING })
   img: string;
 
-  @ApiProperty({ example: 'Alcohol' })
+  @ApiProperty({ example: 'alcohol' })
   @Column({ type: DataType.STRING, allowNull: false })
-  type: string;
+  strength: string;
 
-  @ApiProperty({ example: 'Bitter' })
+  @ApiProperty({ example: 'grape' })
+  @Column({ type: DataType.STRING, allowNull: false })
+  base: string;
+
+  @ApiProperty({ example: 'bitter' })
   @Column({ type: DataType.STRING })
   taste: string;
 
