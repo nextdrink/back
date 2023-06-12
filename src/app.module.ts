@@ -39,12 +39,14 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
         UserRoles,
       ],
       autoLoadModels: true,
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
+      ...(process.env.NODE_ENV === 'production' && {
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
         },
-      },
+      }),
     }),
     UsersModule,
     CocktailsModule,
