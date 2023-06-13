@@ -5,7 +5,7 @@ import {
   Param,
   Post,
   Delete,
-  Patch,
+  Put,
   Response,
   UseGuards,
   HttpStatus,
@@ -94,7 +94,7 @@ export class IngredientsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update ingredient' })
   @ApiOkResponse({ type: Ingredients })
-  @Patch('/admin/:id')
+  @Put('/admin/:id')
   edit(@Param('id') id: string, @Body() ingredientDto: CreateIngredientDto) {
     return this.ingredientsService.updateIngredient(id, ingredientDto);
   }
