@@ -9,6 +9,7 @@ import { AddIngredientDto } from './dto/add-ingredient.dto';
 import { RolesService } from '../roles/roles.service';
 import { Roles } from '../roles/roles.model';
 import { ROLES } from '../constants';
+import {RemoveIngredientsDto} from "./dto/remove-ingredients.dto";
 
 @Injectable()
 export class UsersService {
@@ -89,15 +90,14 @@ export class UsersService {
     throw new HttpException('User or ingredient not found', HttpStatus.NOT_FOUND);
   }
 
-  async removeIngredient(dto: AddIngredientDto) {
-    const { userId, ingredientId } = dto;
+  async removeIngredients(dto: RemoveIngredientsDto) {
+    const { userId, ingredientsId } = dto;
     const user = await this.usersRepository.findByPk(userId);
-    const ingredient = await this.ingredientsRepository.getIngredientById(ingredientId);
 
-    if (user && ingredient) {
-      await user.$remove('ingredients', ingredientId);
+    if (user) {
+      await user.$remove('ingredients', ingredientsId);
       return dto;
     }
-    throw new HttpException('User or ingredient not found', HttpStatus.NOT_FOUND);
+    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 }

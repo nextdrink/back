@@ -8,6 +8,7 @@ import { languages, defaultLang, ROLES } from '../constants';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import {RemoveIngredientsDto} from "./dto/remove-ingredients.dto";
 
 @Controller(`:lang(${languages.join('|')})?/users`)
 export class UsersController {
@@ -60,10 +61,10 @@ export class UsersController {
   }
 
   @UseGuards(JwtGuard)
-  @Delete('/removeIngredient')
-  removeIngredient(@Request() req, @Body() dto: AddIngredientDto) {
+  @Delete('/removeIngredients')
+  removeIngredients(@Request() req, @Body() dto: RemoveIngredientsDto) {
     dto.userId = req?.user?.userId;
-    return this.usersService.removeIngredient(dto);
+    return this.usersService.removeIngredients(dto);
   }
 
   @UseGuards(JwtGuard)
