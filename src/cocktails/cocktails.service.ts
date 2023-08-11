@@ -79,7 +79,7 @@ export class CocktailsService {
           [sequelize.json(`description.${lang}`), 'description'],
           [sequelize.json(`recipe.${lang}`), 'recipe'],
         ],
-        exclude: ['id', 'createdAt', 'updatedAt'],
+        exclude: ['createdAt', 'updatedAt'],
       },
       include: {
         model: Users,

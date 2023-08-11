@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {Injectable, MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -14,12 +14,14 @@ import { UserIngredients } from './ingredients/user-ingredients.model';
 import { RolesModule } from './roles/roles.module';
 import { Roles } from './roles/roles.model';
 import { UserRoles } from './roles/user-roles.model';
+import { AwsS3Module } from './aws-s3/s3.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
+      isGlobal: true,
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
@@ -53,6 +55,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
     IngredientsModule,
     AuthModule,
     RolesModule,
+    AwsS3Module,
   ],
   providers: [],
 })
