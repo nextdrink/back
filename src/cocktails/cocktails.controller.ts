@@ -103,8 +103,8 @@ export class CocktailsController {
     return res.json(cocktailModifiedIngredients);
   }
 
-  // @UseGuards(JwtGuard, RolesGuard)
-  // @Roles(ROLES.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new cocktail' })
   @ApiOkResponse({ type: Cocktails })
   @Post('/admin')
