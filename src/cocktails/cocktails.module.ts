@@ -9,12 +9,14 @@ import { Ingredients } from '../ingredients/ingredients.model';
 import { IngredientCocktails } from './ingredient-cocktails.model';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { UsersModule } from '../users/users.module';
+import { AwsS3Module } from '../aws-s3/s3.module';
 
 @Module({
   providers: [CocktailsService],
   controllers: [CocktailsController],
   imports: [
     IngredientsModule,
+    AwsS3Module,
     SequelizeModule.forFeature([Cocktails, Users, UserCocktails, Ingredients, IngredientCocktails]),
     forwardRef(() => UsersModule),
   ],

@@ -46,7 +46,7 @@ export class IngredientsService {
           [sequelize.json(`name.${lang}`), 'name'],
           [sequelize.json(`description.${lang}`), 'description'],
         ],
-        exclude: ['id', 'createdAt', 'updatedAt'],
+        exclude: ['createdAt', 'updatedAt'],
       },
       include: {
         model: Users,
