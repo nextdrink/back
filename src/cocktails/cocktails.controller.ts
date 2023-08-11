@@ -130,11 +130,11 @@ export class CocktailsController {
     return this.cocktailsService.deleteCocktail(id);
   }
 
-  // @UseGuards(JwtGuard, RolesGuard)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   @Post('/admin/upload-file')
-  async addImageToRecipe(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+  async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
     return await this.s3Service.uploadFile(file, file.originalname);
   }
 }
