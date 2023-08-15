@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
+import { IngredientsModule } from '../ingredients/ingredients.module';
+import { CocktailsModule } from '../cocktails/cocktails.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -12,6 +14,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     UsersModule,
     PassportModule,
+    IngredientsModule,
+    CocktailsModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.PRIVATE_KEY,
