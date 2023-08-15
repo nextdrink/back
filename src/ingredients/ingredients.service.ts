@@ -58,6 +58,18 @@ export class IngredientsService {
     });
   }
 
+  async getIngredientsIdsByUserId(id: number) {
+    const usersIngredients = await this.ingredientsRepository.findAll({
+      attributes: ['id'],
+      include: {
+        model: Users,
+        attributes: [],
+        where: { id },
+      },
+    });
+    return usersIngredients.map(({ id }) => id);
+  }
+
   async getAllIngredientInfo(id) {
     const ingredient = await this.ingredientsRepository.findByPk(id, {
       attributes: { exclude: ['createdAt', 'updatedAt'] },

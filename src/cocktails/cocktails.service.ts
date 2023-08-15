@@ -91,6 +91,19 @@ export class CocktailsService {
     });
   }
 
+  async getCocktailsIdsByUserId(id: number) {
+    const usersCocktails = await this.cocktailsRepository.findAll({
+      attributes: ['id'],
+      include: {
+        model: Users,
+        attributes: [],
+        where: { id },
+      },
+    });
+
+    return usersCocktails.map(({ id }) => id);
+  }
+
   async deleteCocktail(id) {
     const result = await this.cocktailsRepository.destroy({ where: { id } });
     let info = `Cocktail with id ${id} `;

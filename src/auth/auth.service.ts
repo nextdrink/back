@@ -1,22 +1,33 @@
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
+import { IngredientsService } from '../ingredients/ingredients.service';
+import { CocktailsService } from '../cocktails/cocktails.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private ingredientsRepository: IngredientsService,
+    private cocktailsRepository: CocktailsService,
+  ) {}
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
 
     const accessToken = await this.generateToken(user);
     const roles = user.toJSON().roles.map(({ value }) => value);
+    const usersIngredientsIds = await this.ingredientsRepository.getIngredientsIdsByUserId(user.id);
+    const usersCocktailsIds = await this.cocktailsRepository.getCocktailsIdsByUserId(user.id);
 
     return {
       accessToken,
       roles,
+      usersIngredientsIds,
+      usersCocktailsIds,
     };
   }
 
