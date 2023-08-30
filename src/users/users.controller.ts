@@ -8,7 +8,8 @@ import { languages, defaultLang, ROLES } from '../constants';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import {RemoveIngredientsDto} from "./dto/remove-ingredients.dto";
+import { RemoveIngredientsDto } from './dto/remove-ingredients.dto';
+import { RemoveCocktailsDto } from './dto/remove-cocktails.dto';
 
 @Controller(`:lang(${languages.join('|')})?/users`)
 export class UsersController {
@@ -40,10 +41,10 @@ export class UsersController {
   }
 
   @UseGuards(JwtGuard)
-  @Delete('/removeCocktail')
-  removeFavoriteCocktail(@Request() req, @Body() dto: AddCocktailDto) {
+  @Delete('/removeCocktails')
+  removeFavoriteCocktail(@Request() req, @Body() dto: RemoveCocktailsDto) {
     dto.userId = req?.user?.userId;
-    return this.usersService.removeCocktail(dto);
+    return this.usersService.removeCocktails(dto);
   }
 
   @UseGuards(JwtGuard)
