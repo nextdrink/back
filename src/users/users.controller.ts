@@ -26,50 +26,50 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-  @UseGuards(JwtGuard)
   @Post('/addCocktail')
+  @UseGuards(JwtGuard)
   addFavoriteCocktail(@Request() req, @Body() dto: AddCocktailDto) {
     dto.userId = req?.user?.userId;
     return this.usersService.addCocktail(dto);
   }
 
-  @UseGuards(JwtGuard)
   @Get('/getCocktails')
+  @UseGuards(JwtGuard)
   getCocktails(@Request() req, @Param('lang') lang = defaultLang) {
     const userId = req?.user?.userId;
     return this.cocktailsRepository.getCocktailsByUserId(userId, lang);
   }
 
-  @UseGuards(JwtGuard)
   @Delete('/removeCocktails')
+  @UseGuards(JwtGuard)
   removeFavoriteCocktail(@Request() req, @Body() dto: RemoveCocktailsDto) {
     dto.userId = req?.user?.userId;
     return this.usersService.removeCocktails(dto);
   }
 
-  @UseGuards(JwtGuard)
   @Post('/addIngredient')
+  @UseGuards(JwtGuard)
   addIngredient(@Request() req, @Body() dto: AddIngredientDto) {
     dto.userId = req?.user?.userId;
     return this.usersService.addIngredient(dto);
   }
 
-  @UseGuards(JwtGuard)
   @Get('/getIngredients')
+  @UseGuards(JwtGuard)
   getIngredients(@Request() req, @Param('lang') lang = defaultLang) {
     const userId = req?.user?.userId;
     return this.ingredientsRepository.getIngredientsByUserId(userId, lang);
   }
 
-  @UseGuards(JwtGuard)
   @Delete('/removeIngredients')
+  @UseGuards(JwtGuard)
   removeIngredients(@Request() req, @Body() dto: RemoveIngredientsDto) {
     dto.userId = req?.user?.userId;
     return this.usersService.removeIngredients(dto);
   }
 
-  @UseGuards(JwtGuard)
   @Get('/myBar')
+  @UseGuards(JwtGuard)
   async myBar(@Request() req, @Param('lang') lang = defaultLang) {
     const userId = req?.user?.userId;
     return this.cocktailsRepository.getCocktailsFromMyIngredients(userId, lang);

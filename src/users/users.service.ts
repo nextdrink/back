@@ -9,8 +9,8 @@ import { AddIngredientDto } from './dto/add-ingredient.dto';
 import { RolesService } from '../roles/roles.service';
 import { Roles } from '../roles/roles.model';
 import { ROLES } from '../constants';
-import {RemoveIngredientsDto} from "./dto/remove-ingredients.dto";
-import {RemoveCocktailsDto} from "./dto/remove-cocktails.dto";
+import { RemoveIngredientsDto } from './dto/remove-ingredients.dto';
+import { RemoveCocktailsDto } from './dto/remove-cocktails.dto';
 
 @Injectable()
 export class UsersService {
