@@ -11,7 +11,8 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
-  ParseUUIDPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
@@ -39,9 +40,9 @@ export class CocktailsController {
     return this.cocktailsService.getAllCocktails(lang);
   }
 
+  @Get(':id')
   @ApiOperation({ summary: 'Get cocktail' })
   @ApiOkResponse({ type: Cocktails })
-  @Get(':id')
   async getCocktail(@Param('id') id, @Param('lang') lang = defaultLang, @Response() res) {
     const cocktailObjectDB = await this.cocktailsService.getCocktailById(id);
     const cocktail = cocktailObjectDB?.toJSON();
@@ -68,20 +69,20 @@ export class CocktailsController {
     return res.json(cocktailOneLang);
   }
 
+  @Get('/admin/all')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Get all cocktails for the admin panel' })
   @ApiOkResponse({ type: [GetAllAdminCocktailsDto] })
-  @Get('/admin/all')
   async getAdminAll(@Param('lang') lang = defaultLang) {
     return this.cocktailsService.getAllAdminCocktails(lang);
   }
 
+  @Get('/admin/:id')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Get a cocktail for editing in the admin panel' })
   @ApiOkResponse({ type: CreateCocktailDto })
-  @Get('/admin/:id')
   async getAdminCocktail(@Param('id') id, @Response() res) {
     const cocktailObjectDB = await this.cocktailsService.getCocktailById(id);
     const cocktail = cocktailObjectDB?.toJSON();
@@ -103,37 +104,38 @@ export class CocktailsController {
     return res.json(cocktailModifiedIngredients);
   }
 
+  @Post('/admin')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new cocktail' })
   @ApiOkResponse({ type: Cocktails })
-  @Post('/admin')
   create(@Body() cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.createCocktail(cocktailDto);
   }
 
+  @Put('/admin/:id')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update cocktail' })
   @ApiOkResponse({ type: UpdateCocktailDto })
-  @Put('/admin/:id')
+  @UsePipes(ValidationPipe)
   update(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
 
+  @Delete('admin/:id')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete cocktail' })
   @ApiOkResponse({ type: DeleteCocktailDto })
-  @Delete('admin/:id')
   delete(@Param('id') id: string) {
     return this.cocktailsService.deleteCocktail(id);
   }
 
+  @Post('/admin/upload-file')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
-  @Post('/admin/upload-file')
   async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
     return await this.s3Service.uploadFile(file, file.originalname);
   }

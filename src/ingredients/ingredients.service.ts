@@ -12,7 +12,11 @@ export class IngredientsService {
   constructor(@InjectModel(Ingredients) private ingredientsRepository: typeof Ingredients) {}
 
   async createIngredient(dto: CreateIngredientDto) {
-    return await this.ingredientsRepository.create(dto);
+    try {
+      return await this.ingredientsRepository.create(dto);
+    } catch (e) {
+      return e.message;
+    }
   }
 
   async getAllIngredients(lang) {

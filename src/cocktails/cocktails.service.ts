@@ -17,12 +17,16 @@ export class CocktailsService {
   ) {}
 
   async createCocktail(dto: CreateCocktailDto) {
-    const cocktail = await this.cocktailsRepository.create(dto);
+    try {
+      const cocktail = await this.cocktailsRepository.create(dto);
 
-    const { ingredients } = dto;
-    await this.addIngredientForCocktail(cocktail, ingredients);
+      const { ingredients } = dto;
+      await this.addIngredientForCocktail(cocktail, ingredients);
 
-    return this.getCocktailById(cocktail.id);
+      return this.getCocktailById(cocktail.id);
+    } catch (e) {
+      return e.message;
+    }
   }
 
   async getAllCocktails(lang: string) {
