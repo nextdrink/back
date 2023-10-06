@@ -7,6 +7,8 @@ import { CocktailsModule } from '../cocktails/cocktails.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TokenModule } from '../token/token.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   controllers: [AuthController],
@@ -16,6 +18,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PassportModule,
     IngredientsModule,
     CocktailsModule,
+    TokenModule,
+    MailModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.PRIVATE_KEY,
