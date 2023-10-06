@@ -8,6 +8,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import dayjs from 'dayjs';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
@@ -90,14 +91,14 @@ export class AuthService {
     const tokenPayload = {
       userId: user.id,
       token,
-      expireAt: '2023-10-02T09:25:45.728Z',
+      expireAt: dayjs().add(1, 'day').toISOString(),
     };
     await this.tokenService.create(tokenPayload);
 
     const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
     await this.mailService.send({
       from: this.configService.get<string>('JS_CODE_MAIL'),
-      to: 'alex@lisovskii.com',
+      to: user.email,
       subject: 'Verify User',
       text: `
                 Hello ${user.firstName}!
