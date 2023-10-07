@@ -1,4 +1,4 @@
-import {Injectable, MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -16,6 +16,8 @@ import { Roles } from './roles/roles.model';
 import { UserRoles } from './roles/user-roles.model';
 import { AwsS3Module } from './aws-s3/s3.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { MailModule } from './mail/mail.module';
+import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -56,6 +58,8 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
     AuthModule,
     RolesModule,
     AwsS3Module,
+    MailModule,
+    TokenModule,
   ],
   providers: [],
 })

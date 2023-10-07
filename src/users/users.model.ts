@@ -6,6 +6,7 @@ import { UserIngredients } from '../ingredients/user-ingredients.model';
 import { Ingredients } from '../ingredients/ingredients.model';
 import { Roles } from '../roles/roles.model';
 import { UserRoles } from '../roles/user-roles.model';
+import { statusEnum } from './enums/status.enum';
 
 interface UserCreationAttr {
   email: string;
@@ -30,6 +31,9 @@ export class Users extends Model<Users, UserCreationAttr> {
   @ApiProperty({ example: 'dskE3!{0kEz' })
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
+
+  @Column({ type: DataType.ENUM(...Object.values(statusEnum)), allowNull: false })
+  status: string;
 
   @BelongsToMany(() => Cocktails, () => UserCocktails)
   cocktails: Cocktails[];

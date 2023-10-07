@@ -6,4 +6,6 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'Alcohol' })
   readonly password: string;
+
+  readonly status: string;
 }
