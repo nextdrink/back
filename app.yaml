@@ -1,0 +1,10 @@
+env: standard
+runtime: nodejs18
+service: nextdrink-back
+vpc_access_connector:
+  name: projects/nextdrink-dev/locations/europe-west3/connectors/nextdrink-serverless
+
+handlers:
+  - url: /.*
+    secure: always
+    script: auto
