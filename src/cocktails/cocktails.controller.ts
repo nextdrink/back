@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import {
   Controller,
   Post,
@@ -14,19 +15,22 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
 import { S3Service } from '../aws-s3/s3.service';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Cocktails } from './cocktails.model';
-import { DeleteCocktailDto, UpdateCocktailDto } from './dto/actions-cocktail.dto';
+import {
+  DeleteCocktailDto,
+  DeleteCocktailImgDto,
+  UpdateCocktailDto,
+} from './dto/actions-cocktail.dto';
 import { languages, defaultLang, ROLES } from '../constants';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import { GetAllAdminCocktailsDto } from './dto/get-all-admin-cocktails.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
 
 @ApiTags('Cocktails')
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
@@ -123,7 +127,7 @@ export class CocktailsController {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
 
-  @Delete('admin/:id')
+  @Delete('admin/id/:id')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete cocktail' })
@@ -135,8 +139,22 @@ export class CocktailsController {
   @Post('/admin/upload-file')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
+  @ApiOkResponse({ description: 'https://test.com/mops-pes.png' })
+  @ApiOperation({ summary: 'Upload image for cocktail' })
   @UseInterceptors(FileInterceptor('file'))
   async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
     return await this.s3Service.uploadFile(file, file.originalname);
+  }
+
+  @Delete('/admin/delete-file')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
+  @ApiOkResponse({
+    description: "Successfully removed https://test.com/mops-pes.png or file doesn't exist",
+  })
+  @ApiOperation({ summary: 'Delete cocktail image' })
+  async deleteImageFromCocktail(@Body() deleteCocktailImageDto: DeleteCocktailImgDto) {
+    const { fileName } = deleteCocktailImageDto;
+    return await this.s3Service.deleteFile(fileName);
   }
 }
