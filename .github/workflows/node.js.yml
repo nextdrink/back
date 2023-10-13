@@ -41,6 +41,15 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
+    - uses: 73h/gae-app-yaml-replace-env-variables@v0.3
+      env:
+        DBHOST: ${{ secrets.DBHOST }}
+        DBPASS: ${{ secrets.DBPASS }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+        MAILGUN_API_DOMAIN: ${{ secrets.MAILGUN_API_DOMAIN }}
+      with:
+        app_yaml_path: "app.yaml"
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
@@ -51,3 +60,6 @@ jobs:
       uses: 'google-github-actions/deploy-appengine@v1'
       with:
         project_id: "nextdrink-dev"
+
+    - id: 'force-back-to-internal-ingress-only'
+      run: gcloud app services update nextdrink-back --ingress=internal-only --project=nextdrink-dev

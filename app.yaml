@@ -8,3 +8,16 @@ handlers:
   - url: /.*
     secure: always
     script: auto
+
+env_variables:
+  PORT: "3500"
+  POSTGRES_HOST: $DBHOST
+  POSTGRES_USER: "postgres"
+  POSTGRES_DB: "next-drink"
+  POSTGRES_PASSWORD: $DBPASS
+  POSTGRES_PORT: "5432"
+  PRIVATE_KEY: $PRIVATE_KEY
+  MAILGUN_API_KEY: $MAILGUN_API_KEY
+  MAILGUN_API_DOMAIN: $MAILGUN_API_DOMAIN
+  FE_APP_URL: https://dev.nextdrink.me
+  JS_CODE_MAIL: test@mybetwer.com
