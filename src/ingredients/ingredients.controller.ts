@@ -18,7 +18,7 @@ import { IngredientsService } from './ingredients.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { Ingredients } from './ingredients.model';
-import { languages, defaultLang, ROLES } from '../constants';
+import { languages, defaultLang, ROLES, MEDIA_STORAGE_FOLDERS } from '../constants';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
@@ -123,8 +123,11 @@ export class IngredientsController {
   @ApiOkResponse({ description: 'https://test.com/mops-pes.png' })
   @ApiOperation({ summary: 'Upload image for ingredient' })
   @UseInterceptors(FileInterceptor('file'))
-  async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
-    return await this.s3Service.uploadFile(file, `ingredients/${file.originalname}`);
+  async addImageToIngredient(@UploadedFile() file: Express.Multer.File) {
+    return await this.s3Service.uploadFile(
+      file,
+      `${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${file.originalname}`,
+    );
   }
 
   @Delete('/admin/delete-file')
@@ -134,8 +137,8 @@ export class IngredientsController {
     description: "Successfully removed https://test.com/mops-pes.png or file doesn't exist",
   })
   @ApiOperation({ summary: 'Delete ingredient image' })
-  async deleteImageFromCocktail(@Body() deleteCocktailImageDto: DeleteIngredientImgDto) {
+  async deleteImageFromIngredient(@Body() deleteCocktailImageDto: DeleteIngredientImgDto) {
     const { fileName } = deleteCocktailImageDto;
-    return await this.s3Service.deleteFile(`ingredients/${fileName}`);
+    return await this.s3Service.deleteFile(`${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${fileName}`);
   }
 }
