@@ -11,6 +11,8 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { IngredientsService } from './ingredients.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -20,11 +22,15 @@ import { languages, defaultLang, ROLES } from '../constants';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
+import { S3Service } from '../aws-s3/s3.service';
+import { DeleteIngredientImgDto } from './dto/actions-ingredients.dto';
 
 @ApiTags('Ingredients')
 @Controller(`:lang(${languages.join('|')})?/ingredients`)
 export class IngredientsController {
-  constructor(private ingredientsService: IngredientsService) {}
+  constructor(private ingredientsService: IngredientsService, private s3Service: S3Service) {}
 
   @ApiOperation({ summary: 'Get all ingredients' })
   @ApiOkResponse({ type: [Ingredients] })
@@ -102,12 +108,34 @@ export class IngredientsController {
     return this.ingredientsService.updateIngredient(id, ingredientDto);
   }
 
-  @Delete('/admin/:id')
+  @Delete('/admin/id/:id')
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete ingredient' })
   @ApiOkResponse({ type: Ingredients })
   deleteIngredient(@Param('id') id: string) {
     return this.ingredientsService.deleteIngredient(id);
+  }
+
+  @Post('/admin/upload-file')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
+  @ApiOkResponse({ description: 'https://test.com/mops-pes.png' })
+  @ApiOperation({ summary: 'Upload image for ingredient' })
+  @UseInterceptors(FileInterceptor('file'))
+  async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
+    return await this.s3Service.uploadFile(file, `ingredients/${file.originalname}`);
+  }
+
+  @Delete('/admin/delete-file')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(ROLES.ADMIN)
+  @ApiOkResponse({
+    description: "Successfully removed https://test.com/mops-pes.png or file doesn't exist",
+  })
+  @ApiOperation({ summary: 'Delete ingredient image' })
+  async deleteImageFromCocktail(@Body() deleteCocktailImageDto: DeleteIngredientImgDto) {
+    const { fileName } = deleteCocktailImageDto;
+    return await this.s3Service.deleteFile(`ingredients/${fileName}`);
   }
 }

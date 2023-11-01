@@ -143,7 +143,7 @@ export class CocktailsController {
   @ApiOperation({ summary: 'Upload image for cocktail' })
   @UseInterceptors(FileInterceptor('file'))
   async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
-    return await this.s3Service.uploadFile(file, file.originalname);
+    return await this.s3Service.uploadFile(file, `cocktails/${file.originalname}`);
   }
 
   @Delete('/admin/delete-file')
@@ -155,6 +155,6 @@ export class CocktailsController {
   @ApiOperation({ summary: 'Delete cocktail image' })
   async deleteImageFromCocktail(@Body() deleteCocktailImageDto: DeleteCocktailImgDto) {
     const { fileName } = deleteCocktailImageDto;
-    return await this.s3Service.deleteFile(fileName);
+    return await this.s3Service.deleteFile(`cocktails/${fileName}`);
   }
 }

@@ -7,11 +7,13 @@ import { Ingredients } from './ingredients.model';
 import { IngredientCocktails } from '../cocktails/ingredient-cocktails.model';
 import { UserIngredients } from './user-ingredients.model';
 import { UsersModule } from '../users/users.module';
+import { AwsS3Module } from '../aws-s3/s3.module';
 
 @Module({
   controllers: [IngredientsController],
   providers: [IngredientsService],
   imports: [
+    AwsS3Module,
     SequelizeModule.forFeature([Ingredients, Cocktails, IngredientCocktails, UserIngredients]),
     forwardRef(() => UsersModule),
   ],
