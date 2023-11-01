@@ -34,14 +34,16 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
+    const { id, status } = user;
 
     const accessToken = await this.generateToken(user);
     const roles = user.toJSON().roles.map(({ value }) => value);
-    const usersIngredientsIds = await this.ingredientsRepository.getIngredientsIdsByUserId(user.id);
-    const usersCocktailsIds = await this.cocktailsRepository.getCocktailsIdsByUserId(user.id);
+    const usersIngredientsIds = await this.ingredientsRepository.getIngredientsIdsByUserId(id);
+    const usersCocktailsIds = await this.cocktailsRepository.getCocktailsIdsByUserId(id);
 
     return {
       accessToken,
+      status,
       roles,
       usersIngredientsIds,
       usersCocktailsIds,
