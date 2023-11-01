@@ -5,4 +5,9 @@ const ROLES = {
   USER: 'user',
 };
 
-export { languages, defaultLang, ROLES };
+const MEDIA_STORAGE_FOLDERS = {
+  INGREDIENTS: 'ingredients',
+  COCKTAILS: 'cocktails',
+};
+
+export { languages, defaultLang, ROLES, MEDIA_STORAGE_FOLDERS };
