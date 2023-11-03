@@ -30,6 +30,10 @@ export class UsersService {
     return user;
   }
 
+  async updateUser(data, id) {
+    return await this.usersRepository.update({ ...data }, { where: { id } });
+  }
+
   async getAllUsers() {
     return await this.usersRepository.findAll({
       include: {

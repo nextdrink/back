@@ -29,6 +29,7 @@ export class UsersController {
   @Post('/addCocktail')
   @UseGuards(JwtGuard)
   addFavoriteCocktail(@Request() req, @Body() dto: AddCocktailDto) {
+    // TODO: use GetUser decorator
     dto.userId = req?.user?.userId;
     return this.usersService.addCocktail(dto);
   }
@@ -36,6 +37,7 @@ export class UsersController {
   @Get('/getCocktails')
   @UseGuards(JwtGuard)
   getCocktails(@Request() req, @Param('lang') lang = defaultLang) {
+    // TODO: use GetUser decorator
     const userId = req?.user?.userId;
     return this.cocktailsRepository.getCocktailsByUserId(userId, lang);
   }
@@ -43,6 +45,7 @@ export class UsersController {
   @Delete('/removeCocktails')
   @UseGuards(JwtGuard)
   removeFavoriteCocktail(@Request() req, @Body() dto: RemoveCocktailsDto) {
+    // TODO: use GetUser decorator
     dto.userId = req?.user?.userId;
     return this.usersService.removeCocktails(dto);
   }
@@ -50,6 +53,7 @@ export class UsersController {
   @Post('/addIngredient')
   @UseGuards(JwtGuard)
   addIngredient(@Request() req, @Body() dto: AddIngredientDto) {
+    // TODO: use GetUser decorator
     dto.userId = req?.user?.userId;
     return this.usersService.addIngredient(dto);
   }
@@ -57,6 +61,7 @@ export class UsersController {
   @Get('/getIngredients')
   @UseGuards(JwtGuard)
   getIngredients(@Request() req, @Param('lang') lang = defaultLang) {
+    // TODO: use GetUser decorator
     const userId = req?.user?.userId;
     return this.ingredientsRepository.getIngredientsByUserId(userId, lang);
   }
@@ -64,6 +69,7 @@ export class UsersController {
   @Delete('/removeIngredients')
   @UseGuards(JwtGuard)
   removeIngredients(@Request() req, @Body() dto: RemoveIngredientsDto) {
+    // TODO: use GetUser decorator
     dto.userId = req?.user?.userId;
     return this.usersService.removeIngredients(dto);
   }
@@ -71,6 +77,7 @@ export class UsersController {
   @Get('/myBar')
   @UseGuards(JwtGuard)
   async myBar(@Request() req, @Param('lang') lang = defaultLang) {
+    // TODO: use GetUser decorator
     const userId = req?.user?.userId;
     return this.cocktailsRepository.getCocktailsFromMyIngredients(userId, lang);
   }
