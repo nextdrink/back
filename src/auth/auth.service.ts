@@ -104,7 +104,6 @@ export class AuthService {
 
     // TODO: check if token exist for user
     await this.saveToken(token, user.id);
-    console.log(typeof token);
 
     await this.sendChangePassLink(user.id, token);
   }
