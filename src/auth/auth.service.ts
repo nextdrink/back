@@ -126,7 +126,13 @@ export class AuthService {
     const user = await this.usersService.getUserWithRolesByEmail(email);
     if (user) {
       const passwordEquals = await bcrypt.compare(password, user.password);
-      if (passwordEquals) return user;
+      // TODO: refactor
+      if (passwordEquals) {
+        if (user.status !== statusEnum.active) {
+          throw new HttpException('Forbidden resource', HttpStatus.FORBIDDEN);
+        }
+        return user;
+      }
     }
 
     throw new UnauthorizedException({ message: 'wrong user data' });
@@ -156,8 +162,6 @@ export class AuthService {
   }
 
   private async sendConfirmationEmailLink(user, token) {
-    await this.saveToken(user, token);
-
     const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
     await this.mailService.send({
       from: this.configService.get<string>('JS_CODE_MAIL'),
