@@ -41,6 +41,7 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
+    - uses: 73h/gae-app-yaml-replace-env-variables@v0.3
       env:
         DBHOST: ${{ secrets.DBHOST }}
         DBPASS: ${{ secrets.DBPASS }}
