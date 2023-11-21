@@ -105,7 +105,7 @@ export class AuthService {
     // TODO: check if token exist for user
     await this.saveToken(token, user.id);
 
-    await this.sendChangePassLink(user.id, token);
+    await this.sendChangePassLink(user.email, token);
   }
 
   async changePassword(changePasswordDto: ChangePasswordDto) {
@@ -174,11 +174,11 @@ export class AuthService {
     });
   }
 
-  private async sendChangePassLink(user, token) {
+  private async sendChangePassLink(email, token) {
     const confirmLink = `${this.clientAppUrl}/auth/reset?token=${token}`;
     await this.mailService.send({
       from: this.configService.get<string>('JS_CODE_MAIL'),
-      to: user.email,
+      to: email,
       subject: 'Verify User',
       text: `
                 Hello there!
