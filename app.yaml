@@ -10,7 +10,7 @@ handlers:
     script: auto
 
 env_variables:
-  PORT: "3500"
+  PORT: "3000"
   POSTGRES_HOST: $DBHOST
   POSTGRES_USER: "postgres"
   POSTGRES_DB: "next-drink"
@@ -23,7 +23,7 @@ env_variables:
   JS_CODE_MAIL: test@mybetwer.com
 
 build_env_variables:
-  PORT: "3500"
+  PORT: "3000"
   POSTGRES_HOST: $DBHOST
   POSTGRES_USER: "postgres"
   POSTGRES_DB: "next-drink"
