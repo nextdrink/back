@@ -41,6 +41,14 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
+      env:
+        DBHOST: ${{ secrets.DBHOST }}
+        DBPASS: ${{ secrets.DBPASS }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+        MAILGUN_API_DOMAIN: ${{ secrets.MAILGUN_API_DOMAIN }}
+      with:
+        app_yaml_path: "app.yaml"
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
