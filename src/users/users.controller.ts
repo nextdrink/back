@@ -5,7 +5,7 @@ import { CocktailsService } from '../cocktails/cocktails.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { AddIngredientDto } from './dto/add-ingredient.dto';
 import { languages, defaultLang, ROLES } from '../constants';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { RemoveIngredientsDto } from './dto/remove-ingredients.dto';

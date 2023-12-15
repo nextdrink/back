@@ -1,13 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
@@ -57,10 +51,7 @@ export class AuthService {
     const candidate = await this.usersService.getUserByEmail(userDto.email);
 
     if (candidate) {
-      throw new HttpException(
-        `User with email ${userDto.email} already exist`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(`User with email ${userDto.email} already exists`, HttpStatus.BAD_REQUEST);
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5);
     const user = await this.usersService.createUser({
@@ -94,10 +85,7 @@ export class AuthService {
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
     const user = await this.usersService.getUserByEmail(forgotPasswordDto.email);
     if (!user) {
-      throw new HttpException(
-        `User with email ${forgotPasswordDto.email} not found`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(`User with email ${forgotPasswordDto.email} not found`, HttpStatus.BAD_REQUEST);
     }
 
     const token = await this.generateToken(user);
