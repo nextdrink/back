@@ -26,8 +26,8 @@ describe('AuthController (e2e)', () => {
         .expect((response: request.Response) => {
           const { text } = response;
           token = text;
-          expect(typeof text).toBe('string');
-          expect(text.length).toBeGreaterThan(10);
+          expect(typeof token).toBe('string');
+          expect(token.length).toBeGreaterThan(10);
         })
         .expect(HttpStatus.CREATED);
     });
