@@ -32,16 +32,7 @@ import { TokenModule } from './token/token.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [
-        Cocktails,
-        Users,
-        UserCocktails,
-        Ingredients,
-        IngredientCocktails,
-        UserIngredients,
-        Roles,
-        UserRoles,
-      ],
+      models: [Cocktails, Users, UserCocktails, Ingredients, IngredientCocktails, UserIngredients, Roles, UserRoles],
       autoLoadModels: true,
       ...(process.env.NODE_ENV === 'production' && {
         dialectOptions: {

@@ -12,7 +12,6 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
-  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,11 +20,7 @@ import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
 import { S3Service } from '../aws-s3/s3.service';
 import { Cocktails } from './cocktails.model';
-import {
-  DeleteCocktailDto,
-  DeleteCocktailImgDto,
-  UpdateCocktailDto,
-} from './dto/actions-cocktail.dto';
+import { DeleteCocktailDto, DeleteCocktailImgDto, UpdateCocktailDto } from './dto/actions-cocktail.dto';
 import { languages, defaultLang, ROLES, MEDIA_STORAGE_FOLDERS } from '../constants';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -113,7 +108,7 @@ export class CocktailsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new cocktail' })
   @ApiOkResponse({ type: Cocktails })
-  create(@Body() cocktailDto: CreateCocktailDto) {
+  create(@Body(new ValidationPipe()) cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.createCocktail(cocktailDto);
   }
 
@@ -122,8 +117,7 @@ export class CocktailsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update cocktail' })
   @ApiOkResponse({ type: UpdateCocktailDto })
-  @UsePipes(ValidationPipe)
-  update(@Param('id') id: string, @Body() cocktailDto: CreateCocktailDto) {
+  update(@Param('id') id: string, @Body(new ValidationPipe()) cocktailDto: CreateCocktailDto) {
     return this.cocktailsService.updateCocktail(id, cocktailDto);
   }
 
@@ -143,10 +137,7 @@ export class CocktailsController {
   @ApiOperation({ summary: 'Upload image for cocktail' })
   @UseInterceptors(FileInterceptor('file'))
   async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
-    return await this.s3Service.uploadFile(
-      file,
-      `${MEDIA_STORAGE_FOLDERS.COCKTAILS}/${file.originalname}`,
-    );
+    return await this.s3Service.uploadFile(file, `${MEDIA_STORAGE_FOLDERS.COCKTAILS}/${file.originalname}`);
   }
 
   @Delete('/admin/delete-file')
