@@ -18,8 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:docker:run": "docker compose -f ./docker-compose.test.yml up --build --abort-on-container-exit",
-    "test:docker:stop": "docker compose -f  ./docker-compose.test.yml rm -s -f",
+    "test:docker:run": "docker compose -f ./test/docker-compose.test.yml up --build --abort-on-container-exit",
+    "test:docker:stop": "docker compose -f  ./test/docker-compose.test.yml rm -s -f",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
