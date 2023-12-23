@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14.3-alpine
+    env_file:
+      - ../.test.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 54340:5432
+    restart: always

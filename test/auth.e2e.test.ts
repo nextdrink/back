@@ -4,24 +4,34 @@ import { app } from './setup';
 import { statusEnum } from '../src/users/enums/status.enum';
 import { TokenService } from '../src/token/token.service';
 import { UsersService } from '../src/users/users.service';
+import { RolesService } from '../src/roles/roles.service';
+import { mockUser, changedPassword, mockAdminUser } from './mocked-data';
+import { ROLES } from '../src/constants';
+import * as bcrypt from 'bcryptjs';
 
-const mockUser = {
-  email: 'testd@test.com',
-  password: '1234567yO',
-};
-const changedPassword = '1234567yO1';
 let token: string;
+const authPath = 'auth';
 
 describe('AuthController (e2e)', () => {
-  afterAll(async () => {
-    const userService = app.get(UsersService);
-    await userService.usersRepository.destroy({ where: { email: mockUser.email } });
+  beforeAll(async () => {
+    const rolesService = app.get(RolesService);
+    const usersService = app.get(UsersService);
+    rolesService.roleRepository.bulkCreate([
+      { value: 'user', description: 'user' },
+      { value: 'admin', description: 'admin' },
+    ]);
+
+    // create admin user for testing admin endpoints
+    const hashPassword = await bcrypt.hash(mockAdminUser.password, 5);
+    const user = await usersService.usersRepository.create({ ...mockAdminUser, password: hashPassword });
+    const role = await rolesService.getRoleByValue(ROLES.ADMIN);
+    await user.$set('roles', [role.id]);
   });
 
   describe('Successfully cases', () => {
     it('Should register new user', async () => {
       return request(app.getHttpServer())
-        .post('/auth/registration')
+        .post(`/${authPath}/registration`)
         .send(mockUser)
         .expect((response: request.Response) => {
           const { text } = response;
@@ -33,12 +43,12 @@ describe('AuthController (e2e)', () => {
     });
 
     it('Should confirm new user', () => {
-      return request(app.getHttpServer()).get(`/auth/confirm?token=${token}`).expect(HttpStatus.OK);
+      return request(app.getHttpServer()).get(`/${authPath}/confirm?token=${token}`).expect(HttpStatus.OK);
     });
 
     it('Should login new user', () => {
       return request(app.getHttpServer())
-        .post('/auth/login')
+        .post(`/${authPath}/login`)
         .send(mockUser)
         .expect((response: request.Response) => {
           const { accessToken, status, roles, usersIngredientsIds, usersCocktailsIds } = response.body;
@@ -56,7 +66,7 @@ describe('AuthController (e2e)', () => {
 
     it('Should create request for forgot password', () => {
       return request(app.getHttpServer())
-        .post('/auth/forgotPassword')
+        .post(`/${authPath}/forgotPassword`)
         .send({ email: mockUser.email })
         .expect(HttpStatus.CREATED);
     });
@@ -67,7 +77,7 @@ describe('AuthController (e2e)', () => {
         order: [['id', 'DESC']],
       });
       return request(app.getHttpServer())
-        .patch('/auth/changePassword')
+        .patch(`/${authPath}/changePassword`)
         .send({ token, password: changedPassword })
         .expect(HttpStatus.OK);
     });
@@ -76,7 +86,7 @@ describe('AuthController (e2e)', () => {
   describe('Failed cases', () => {
     it('Should not register existing user', async () => {
       return request(app.getHttpServer())
-        .post('/auth/registration')
+        .post(`/${authPath}/registration`)
         .send(mockUser)
         .expect((response: request.Response) => {
           const { statusCode, message } = response.body;
@@ -88,7 +98,7 @@ describe('AuthController (e2e)', () => {
 
     it('Should not login existing user with wrong password', async () => {
       return request(app.getHttpServer())
-        .post('/auth/login')
+        .post(`/${authPath}/login`)
         .send({ ...mockUser, password: '123wrongPassword' })
         .expect((response: request.Response) => {
           const { message } = response.body;
@@ -99,7 +109,7 @@ describe('AuthController (e2e)', () => {
 
     it('Should not login non-existing user', async () => {
       return request(app.getHttpServer())
-        .post('/auth/login')
+        .post(`/${authPath}/login`)
         .send({ ...mockUser, email: 'wrong@email.com' })
         .expect((response: request.Response) => {
           const { message } = response.body;
@@ -112,7 +122,7 @@ describe('AuthController (e2e)', () => {
       const userService = app.get(UsersService);
       await userService.usersRepository.update({ status: statusEnum.pending }, { where: { email: mockUser.email } });
       return request(app.getHttpServer())
-        .post('/auth/login')
+        .post(`/${authPath}/login`)
         .send({ ...mockUser, password: changedPassword })
         .expect((response: request.Response) => {
           const { statusCode, message } = response.body;
@@ -124,13 +134,13 @@ describe('AuthController (e2e)', () => {
 
     it('Should not confirm non-existing token', async () => {
       return request(app.getHttpServer())
-        .get(`/auth/confirm?token=${token + '123'}`)
+        .get(`/${authPath}/confirm?token=${token + '123'}`)
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
     it('Should not reset password for non-existing user', async () => {
       return request(app.getHttpServer())
-        .post('/auth/forgotPassword')
+        .post(`/${authPath}/forgotPassword`)
         .send({ email: 'wrong@email.com' })
         .expect((response: request.Response) => {
           const { statusCode, message } = response.body;
@@ -142,7 +152,7 @@ describe('AuthController (e2e)', () => {
 
     it('Should not change password with wrong token', async () => {
       return request(app.getHttpServer())
-        .patch('/auth/changePassword')
+        .patch(`/${authPath}/changePassword`)
         .send({ token: 'wrong token', password: mockUser.password })
         .expect((response: request.Response) => {
           const { statusCode, message } = response.body;
