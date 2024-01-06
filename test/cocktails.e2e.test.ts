@@ -19,7 +19,6 @@ describe('Cocktails Controller (e2e)', () => {
       .send(mockAdminUser)
       .expect((response: request.Response) => {
         const { accessToken } = response.body;
-        console.log(response.body, 'response.body');
         token = accessToken;
       });
   });
@@ -86,7 +85,7 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.CREATED);
     });
 
-    it('Should create cocktail', async () => {
+    it('Should update cocktail', async () => {
       return request(app.getHttpServer())
         .put(`/${cocktailsPath}/admin/3`)
         .send({ ...mockCocktail, name: { en: 'test33', uk: 'тест33' } })
@@ -108,7 +107,103 @@ describe('Cocktails Controller (e2e)', () => {
     });
   });
 
-  // describe('Failed cases', () => {
-  // TODO to be continue....
-  // });
+  describe('Failed cases', () => {
+    it('Should not get all cocktails with wrong lang', async () => {
+      return request(app.getHttpServer())
+        .get(`/wrong-lang/${cocktailsPath}`)
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.NOT_FOUND);
+          expect(response.body.error).toBe('Not Found');
+        })
+        .expect(HttpStatus.NOT_FOUND);
+    });
+
+    it('Should not get cocktail by id with wrong lang', async () => {
+      return request(app.getHttpServer())
+        .get(`/wrong-lang/${cocktailsPath}/1`)
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.NOT_FOUND);
+          expect(response.body.error).toBe('Not Found');
+        })
+        .expect(HttpStatus.NOT_FOUND);
+    });
+
+    it('Should not get all admin cocktails without token', async () => {
+      return request(app.getHttpServer())
+        .get(`/${cocktailsPath}/admin/all`)
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
+          expect(response.body.message).toBe('Unauthorized');
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('Should not get admin cocktail by id without token', async () => {
+      return request(app.getHttpServer())
+        .get(`/${cocktailsPath}/admin/1`)
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
+          expect(response.body.message).toBe('Unauthorized');
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('Should not create cocktail without token', async () => {
+      return request(app.getHttpServer())
+        .post(`/${cocktailsPath}/admin`)
+        .send({ ...mockCocktail, name: { en: 'test3', uk: 'тест3' } })
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
+          expect(response.body.message).toBe('Unauthorized');
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('Should not create cocktail with invalid data', async () => {
+      return request(app.getHttpServer())
+        .post(`/${cocktailsPath}/admin`)
+        .send({ ...mockCocktail, name: '' })
+        .set('Authorization', 'Bearer ' + token)
+        .expect((response: request.Response) => {
+          console.log(response.body, 'response.body');
+          expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST);
+          expect(response.body.message[0]).toBe('name field is empty');
+          expect(response.body.error).toBe('Bad Request');
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('Should not update cocktail without token', async () => {
+      return request(app.getHttpServer())
+        .put(`/${cocktailsPath}/admin/2`)
+        .send({ ...mockCocktail, name: { en: 'test22', uk: 'тест22' } })
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
+          expect(response.body.message).toBe('Unauthorized');
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('Should not update cocktail with invalid data', async () => {
+      return request(app.getHttpServer())
+        .put(`/${cocktailsPath}/admin/2`)
+        .send({ ...mockCocktail, name: '' })
+        .set('Authorization', 'Bearer ' + token)
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST);
+          expect(response.body.error).toBe('Bad Request');
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('Should not delete cocktail without token', async () => {
+      return request(app.getHttpServer())
+        .delete(`/${cocktailsPath}/admin/id/2`)
+        .expect((response: request.Response) => {
+          expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
+          expect(response.body.message).toBe('Unauthorized');
+        })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+  });
 });

@@ -5,7 +5,7 @@ interface IngredientCocktail {
   id: number;
   amount: number;
 }
-
+// TODO: validate object fields
 export class CreateCocktailDto {
   @IsNotEmpty({ message: 'name field is empty' })
   @ApiProperty({ example: { en: 'Screw', ua: 'Викрутка' } })
