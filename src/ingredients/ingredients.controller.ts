@@ -79,8 +79,8 @@ export class IngredientsController {
   async get() {
     const ingredients = await this.ingredientsService.getAllIngredients(defaultLang);
 
-    return ingredients.map(({ id, name }) => {
-      return { id, name };
+    return ingredients.map(({ id, name, img }) => {
+      return { id, name, img };
     });
   }
 
