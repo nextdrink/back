@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import sequelize from 'sequelize';
 import { Ingredients } from './ingredients.model';
@@ -15,7 +15,7 @@ export class IngredientsService {
     try {
       return await this.ingredientsRepository.create(dto);
     } catch (e) {
-      return e.message;
+      throw new BadRequestException(e.message);
     }
   }
 
