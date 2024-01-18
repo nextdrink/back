@@ -9,7 +9,6 @@ import {
   Response,
   UseGuards,
   HttpStatus,
-  UsePipes,
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
@@ -66,8 +65,7 @@ export class IngredientsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Create new ingredient' })
   @ApiOkResponse({ type: Ingredients })
-  @UsePipes(ValidationPipe)
-  create(@Body() ingredientDto: CreateIngredientDto) {
+  create(@Body(new ValidationPipe()) ingredientDto: CreateIngredientDto) {
     return this.ingredientsService.createIngredient(ingredientDto);
   }
 
@@ -104,7 +102,7 @@ export class IngredientsController {
   @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Update ingredient' })
   @ApiOkResponse({ type: Ingredients })
-  edit(@Param('id') id: string, @Body() ingredientDto: CreateIngredientDto) {
+  edit(@Param('id') id: string, @Body(new ValidationPipe()) ingredientDto: CreateIngredientDto) {
     return this.ingredientsService.updateIngredient(id, ingredientDto);
   }
 
@@ -124,10 +122,7 @@ export class IngredientsController {
   @ApiOperation({ summary: 'Upload image for ingredient' })
   @UseInterceptors(FileInterceptor('file'))
   async addImageToIngredient(@UploadedFile() file: Express.Multer.File) {
-    return await this.s3Service.uploadFile(
-      file,
-      `${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${file.originalname}`,
-    );
+    return await this.s3Service.uploadFile(file, `${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${file.originalname}`);
   }
 
   @Delete('/admin/delete-file')

@@ -71,3 +71,24 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+jest config from package.json:
+
+"jest": {
+"moduleFileExtensions": [
+"js",
+"json",
+"ts"
+],
+"rootDir": "src",
+"testRegex": ".*\\.spec\\.ts$",
+"transform": {
+"^.+\\.(t|j)s$": "ts-jest"
+},
+"collectCoverageFrom": [
+"**/*.(t|j)s"
+],
+"coverageDirectory": "../coverage",
+"testEnvironment": "node"
+}

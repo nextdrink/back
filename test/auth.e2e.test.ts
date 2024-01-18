@@ -4,30 +4,12 @@ import { app } from './setup';
 import { statusEnum } from '../src/users/enums/status.enum';
 import { TokenService } from '../src/token/token.service';
 import { UsersService } from '../src/users/users.service';
-import { RolesService } from '../src/roles/roles.service';
-import { mockUser, changedPassword, mockAdminUser } from './mocked-data';
-import { ROLES } from '../src/constants';
-import * as bcrypt from 'bcryptjs';
+import { mockUser, changedPassword } from './mocked-data';
 
 let token: string;
 const authPath = 'auth';
 
 describe('AuthController (e2e)', () => {
-  beforeAll(async () => {
-    const rolesService = app.get(RolesService);
-    const usersService = app.get(UsersService);
-    rolesService.roleRepository.bulkCreate([
-      { value: 'user', description: 'user' },
-      { value: 'admin', description: 'admin' },
-    ]);
-
-    // create admin user for testing admin endpoints
-    const hashPassword = await bcrypt.hash(mockAdminUser.password, 5);
-    const user = await usersService.usersRepository.create({ ...mockAdminUser, password: hashPassword });
-    const role = await rolesService.getRoleByValue(ROLES.ADMIN);
-    await user.$set('roles', [role.id]);
-  });
-
   describe('Successfully cases', () => {
     it('Should register new user', async () => {
       return request(app.getHttpServer())

@@ -47,3 +47,18 @@ export const mockCocktail = {
     },
   ],
 };
+
+export const mockIngredient = {
+  name: {
+    en: 'Whisky43',
+    uk: 'Віскі',
+  },
+  description: {
+    en: 'Classik alko',
+    uk: 'Класичний алкоголь',
+  },
+  img: 'https://iasd3efk.images.com',
+  strength: 'alcohol',
+  taste: 'sweet',
+  base: 'grain',
+};
