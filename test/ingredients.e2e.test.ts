@@ -1,58 +1,59 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { app } from './setup';
-import { CocktailsService } from '../src/cocktails/cocktails.service';
-import { mockCocktail } from './mocked-data';
+import { IngredientsService } from '../src/ingredients/ingredients.service';
+import { mockIngredient } from './mocked-data';
 import { loginAdmin } from './helper';
 
 let token: string;
-const cocktailsPath = 'cocktails';
+const ingredientsPath = 'ingredients';
 
-describe('Cocktails Controller (e2e)', () => {
+describe('Ingredients Controller (e2e)', () => {
   beforeAll(async () => {
-    const cocktailsService = app.get(CocktailsService);
-    await cocktailsService.cocktailsRepository.bulkCreate([
-      mockCocktail,
-      { ...mockCocktail, name: { en: 'test2', uk: 'тест2' } },
+    const ingredientsService = app.get(IngredientsService);
+    await ingredientsService.ingredientsRepository.bulkCreate([
+      mockIngredient,
+      { ...mockIngredient, name: { en: 'test2', uk: 'тест2' } },
     ]);
 
     token = await loginAdmin();
   });
+
   // afterAll(async () => {});
 
   describe('Successfully cases', () => {
-    it('Should get all cocktails with default lang(en)', async () => {
+    it('Should get all ingredients with default lang(en)', async () => {
       return request(app.getHttpServer())
-        .get(`/${cocktailsPath}`)
+        .get(`/${ingredientsPath}`)
         .expect((response: request.Response) => {
           expect(response.body.length).toBe(2);
-          expect(response.body[0].name).toBe(mockCocktail.name.en);
+          expect(response.body[0].name).toBe(mockIngredient.name.en);
         })
         .expect(HttpStatus.OK);
     });
 
-    it('Should get all cocktails with uk lang', async () => {
+    it('Should get all ingredients with uk lang', async () => {
       return request(app.getHttpServer())
-        .get(`/uk/${cocktailsPath}`)
+        .get(`/uk/${ingredientsPath}`)
         .expect((response: request.Response) => {
           expect(response.body.length).toBe(2);
-          expect(response.body[0].name).toBe(mockCocktail.name.uk);
+          expect(response.body[0].name).toBe(mockIngredient.name.uk);
         })
         .expect(HttpStatus.OK);
     });
 
-    it('Should get cocktail by id with default lang', async () => {
+    it('Should get ingredient by id with default lang', async () => {
       return request(app.getHttpServer())
-        .get(`/${cocktailsPath}/1`)
+        .get(`/${ingredientsPath}/1`)
         .expect((response: request.Response) => {
-          expect(response.body.name).toBe(mockCocktail.name.en);
+          expect(response.body.name).toBe(mockIngredient.name.en);
         })
         .expect(HttpStatus.OK);
     });
 
-    it('Should get all admin cocktails', async () => {
+    it('Should get all admin ingredients', async () => {
       return request(app.getHttpServer())
-        .get(`/${cocktailsPath}/admin/all`)
+        .get(`/${ingredientsPath}/admin/all`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           expect(response.body.length).toBe(2);
@@ -60,20 +61,20 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.OK);
     });
 
-    it('Should get admin cocktail by id', async () => {
+    it('Should get admin ingredient by id', async () => {
       return request(app.getHttpServer())
-        .get(`/${cocktailsPath}/admin/1`)
+        .get(`/${ingredientsPath}/admin/1`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
-          expect(response.body.name.en).toBe(mockCocktail.name.en);
+          expect(response.body.name.en).toBe(mockIngredient.name.en);
         })
         .expect(HttpStatus.OK);
     });
 
-    it('Should create cocktail', async () => {
+    it('Should create ingredient', async () => {
       return request(app.getHttpServer())
-        .post(`/${cocktailsPath}/admin`)
-        .send({ ...mockCocktail, name: { en: 'test3', uk: 'тест3' } })
+        .post(`/${ingredientsPath}/admin`)
+        .send({ ...mockIngredient, name: { en: 'test3', uk: 'тест3' } })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           expect(response.body.name.en).toBe('test3');
@@ -81,10 +82,10 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.CREATED);
     });
 
-    it('Should update cocktail', async () => {
+    it('Should update ingredient', async () => {
       return request(app.getHttpServer())
-        .put(`/${cocktailsPath}/admin/3`)
-        .send({ ...mockCocktail, name: { en: 'test33', uk: 'тест33' } })
+        .put(`/${ingredientsPath}/admin/3`)
+        .send({ ...mockIngredient, name: { en: 'test33', uk: 'тест33' } })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           expect(response.body.name.en).toBe('test33');
@@ -92,9 +93,9 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.OK);
     });
 
-    it('Should delete cocktail', async () => {
+    it('Should delete ingredient', async () => {
       return request(app.getHttpServer())
-        .delete(`/${cocktailsPath}/admin/id/3`)
+        .delete(`/${ingredientsPath}/admin/id/3`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           console.log(response.body, 'response.body');
@@ -104,9 +105,9 @@ describe('Cocktails Controller (e2e)', () => {
   });
 
   describe('Failed cases', () => {
-    it('Should not get all cocktails with wrong lang', async () => {
+    it('Should not get all ingredients with wrong lang', async () => {
       return request(app.getHttpServer())
-        .get(`/wrong-lang/${cocktailsPath}`)
+        .get(`/wrong-lang/${ingredientsPath}`)
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.NOT_FOUND);
           expect(response.body.error).toBe('Not Found');
@@ -114,9 +115,9 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.NOT_FOUND);
     });
 
-    it('Should not get cocktail by id with wrong lang', async () => {
+    it('Should not get ingredient by id with wrong lang', async () => {
       return request(app.getHttpServer())
-        .get(`/wrong-lang/${cocktailsPath}/1`)
+        .get(`/wrong-lang/${ingredientsPath}/1`)
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.NOT_FOUND);
           expect(response.body.error).toBe('Not Found');
@@ -124,9 +125,9 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.NOT_FOUND);
     });
 
-    it('Should not get all admin cocktails without token', async () => {
+    it('Should not get all admin ingredients without token', async () => {
       return request(app.getHttpServer())
-        .get(`/${cocktailsPath}/admin/all`)
+        .get(`/${ingredientsPath}/admin/all`)
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
           expect(response.body.message).toBe('Unauthorized');
@@ -134,9 +135,9 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('Should not get admin cocktail by id without token', async () => {
+    it('Should not get admin ingredient by id without token', async () => {
       return request(app.getHttpServer())
-        .get(`/${cocktailsPath}/admin/1`)
+        .get(`/${ingredientsPath}/admin/1`)
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
           expect(response.body.message).toBe('Unauthorized');
@@ -144,10 +145,10 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('Should not create cocktail without token', async () => {
+    it('Should not create ingredient without token', async () => {
       return request(app.getHttpServer())
-        .post(`/${cocktailsPath}/admin`)
-        .send({ ...mockCocktail, name: { en: 'test3', uk: 'тест3' } })
+        .post(`/${ingredientsPath}/admin`)
+        .send({ ...mockIngredient, name: { en: 'test3', uk: 'тест3' } })
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
           expect(response.body.message).toBe('Unauthorized');
@@ -155,24 +156,24 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('Should not create cocktail with invalid data', async () => {
+    it('Should not create ingredient with invalid data', async () => {
       return request(app.getHttpServer())
-        .post(`/${cocktailsPath}/admin`)
-        .send({ ...mockCocktail, name: '' })
+        .post(`/${ingredientsPath}/admin`)
+        .send({ ...mockIngredient, name: '' })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           console.log(response.body, 'response.body');
           expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST);
-          expect(response.body.message[0]).toBe('name field is empty');
+          expect(response.body.message[0]).toBe('name field is not correct object');
           expect(response.body.error).toBe('Bad Request');
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('Should not update cocktail without token', async () => {
+    it('Should not update ingredient without token', async () => {
       return request(app.getHttpServer())
-        .put(`/${cocktailsPath}/admin/2`)
-        .send({ ...mockCocktail, name: { en: 'test22', uk: 'тест22' } })
+        .put(`/${ingredientsPath}/admin/2`)
+        .send({ ...mockIngredient, name: { en: 'test22', uk: 'тест22' } })
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
           expect(response.body.message).toBe('Unauthorized');
@@ -180,10 +181,10 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('Should not update cocktail with invalid data', async () => {
+    it('Should not update ingredient with invalid data', async () => {
       return request(app.getHttpServer())
-        .put(`/${cocktailsPath}/admin/2`)
-        .send({ ...mockCocktail, name: '' })
+        .put(`/${ingredientsPath}/admin/2`)
+        .send({ ...mockIngredient, name: '' })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST);
@@ -192,9 +193,9 @@ describe('Cocktails Controller (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('Should not delete cocktail without token', async () => {
+    it('Should not delete ingredient without token', async () => {
       return request(app.getHttpServer())
-        .delete(`/${cocktailsPath}/admin/id/2`)
+        .delete(`/${ingredientsPath}/admin/id/2`)
         .expect((response: request.Response) => {
           expect(response.body.statusCode).toBe(HttpStatus.UNAUTHORIZED);
           expect(response.body.message).toBe('Unauthorized');
