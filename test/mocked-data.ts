@@ -5,6 +5,11 @@ export const mockUser = {
   password: '1234567yO',
 };
 
+export const mockActiveUser = {
+  email: 'test-active@test.com',
+  password: '1234567yO',
+};
+
 export const changedPassword = '1234567yO1';
 
 export const mockAdminUser = {

@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class AddIngredientDto {
-  @ApiProperty({ example: 1 })
-  userId: number;
-
+  @IsNumber()
+  @IsNotEmpty()
   @ApiProperty({ example: 1 })
   readonly ingredientId: number;
 }

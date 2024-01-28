@@ -59,8 +59,8 @@ export class UsersService {
     return user.toJSON().roles.map(({ value }) => value);
   }
 
-  async addCocktail(dto: AddCocktailDto) {
-    const { userId, cocktailId } = dto;
+  async addCocktail(userId: number, dto: AddCocktailDto) {
+    const { cocktailId } = dto;
     const user = await this.usersRepository.findByPk(userId);
     const cocktail = await this.cocktailsRepository.getCocktailById(cocktailId);
 
@@ -71,8 +71,8 @@ export class UsersService {
     throw new HttpException('User or cocktail not found', HttpStatus.NOT_FOUND);
   }
 
-  async removeCocktails(dto: RemoveCocktailsDto) {
-    const { userId, cocktailsId } = dto;
+  async removeCocktails(userId: number, dto: RemoveCocktailsDto) {
+    const { cocktailsId } = dto;
     const user = await this.usersRepository.findByPk(userId);
 
     if (user) {
@@ -82,8 +82,8 @@ export class UsersService {
     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
-  async addIngredient(dto: AddIngredientDto) {
-    const { userId, ingredientId } = dto;
+  async addIngredient(userId: number, dto: AddIngredientDto) {
+    const { ingredientId } = dto;
     const user = await this.usersRepository.findByPk(userId);
     const ingredient = await this.ingredientsRepository.getIngredientById(ingredientId);
 
@@ -94,8 +94,8 @@ export class UsersService {
     throw new HttpException('User or ingredient not found', HttpStatus.NOT_FOUND);
   }
 
-  async removeIngredients(dto: RemoveIngredientsDto) {
-    const { userId, ingredientsId } = dto;
+  async removeIngredients(userId: number, dto: RemoveIngredientsDto) {
+    const { ingredientsId } = dto;
     const user = await this.usersRepository.findByPk(userId);
 
     if (user) {

@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class RemoveIngredientsDto {
-  @ApiProperty({ example: 1 })
-  userId: number;
-
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @IsNotEmpty()
   @ApiProperty({ example: [1, 2] })
   ingredientsId: number[];
 }

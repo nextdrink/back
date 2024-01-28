@@ -6,19 +6,19 @@ import { mockCocktail } from './mocked-data';
 import { loginAdmin } from './helper';
 
 let token: string;
+let createdCocktailId: number;
+
 const cocktailsPath = 'cocktails';
 
 describe('Cocktails Controller (e2e)', () => {
   beforeAll(async () => {
-    const cocktailsService = app.get(CocktailsService);
-    await cocktailsService.cocktailsRepository.bulkCreate([
-      mockCocktail,
-      { ...mockCocktail, name: { en: 'test2', uk: 'тест2' } },
-    ]);
-
     token = await loginAdmin();
   });
-  // afterAll(async () => {});
+
+  afterAll(async () => {
+    const cocktailsService = app.get(CocktailsService);
+    await cocktailsService.cocktailsRepository.destroy({ where: { id: createdCocktailId } });
+  });
 
   describe('Successfully cases', () => {
     it('Should get all cocktails with default lang(en)', async () => {
@@ -76,6 +76,7 @@ describe('Cocktails Controller (e2e)', () => {
         .send({ ...mockCocktail, name: { en: 'test3', uk: 'тест3' } })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
+          createdCocktailId = response.body.id;
           expect(response.body.name.en).toBe('test3');
         })
         .expect(HttpStatus.CREATED);
@@ -83,7 +84,7 @@ describe('Cocktails Controller (e2e)', () => {
 
     it('Should update cocktail', async () => {
       return request(app.getHttpServer())
-        .put(`/${cocktailsPath}/admin/3`)
+        .put(`/${cocktailsPath}/admin/${createdCocktailId}`)
         .send({ ...mockCocktail, name: { en: 'test33', uk: 'тест33' } })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
