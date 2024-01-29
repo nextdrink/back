@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Get, Post, Delete, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Get, Post, Delete, UseGuards, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddCocktailDto } from './dto/add-cocktail.dto';
 import { CocktailsService } from '../cocktails/cocktails.service';
@@ -10,6 +10,7 @@ import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { RemoveIngredientsDto } from './dto/remove-ingredients.dto';
 import { RemoveCocktailsDto } from './dto/remove-cocktails.dto';
+import { GetUser } from '../common/decorators/get-user.decorator';
 
 @Controller(`:lang(${languages.join('|')})?/users`)
 export class UsersController {
@@ -28,57 +29,46 @@ export class UsersController {
 
   @Post('/addCocktail')
   @UseGuards(JwtGuard)
-  addFavoriteCocktail(@Request() req, @Body() dto: AddCocktailDto) {
-    // TODO: use GetUser decorator
-    dto.userId = req?.user?.userId;
-    return this.usersService.addCocktail(dto);
+  addFavoriteCocktail(
+    @GetUser('userId') userId: number,
+    @Body(new ValidationPipe()) dto: AddCocktailDto,
+  ): Promise<AddCocktailDto> {
+    return this.usersService.addCocktail(userId, dto);
   }
 
   @Get('/getCocktails')
   @UseGuards(JwtGuard)
-  getCocktails(@Request() req, @Param('lang') lang = defaultLang) {
-    // TODO: use GetUser decorator
-    const userId = req?.user?.userId;
+  getCocktails(@GetUser('userId') userId: number, @Param('lang') lang = defaultLang) {
     return this.cocktailsRepository.getCocktailsByUserId(userId, lang);
   }
 
   @Delete('/removeCocktails')
   @UseGuards(JwtGuard)
-  removeFavoriteCocktail(@Request() req, @Body() dto: RemoveCocktailsDto) {
-    // TODO: use GetUser decorator
-    dto.userId = req?.user?.userId;
-    return this.usersService.removeCocktails(dto);
+  removeFavoriteCocktail(@GetUser('userId') userId: number, @Body(new ValidationPipe()) dto: RemoveCocktailsDto) {
+    return this.usersService.removeCocktails(userId, dto);
   }
 
   @Post('/addIngredient')
   @UseGuards(JwtGuard)
-  addIngredient(@Request() req, @Body() dto: AddIngredientDto) {
-    // TODO: use GetUser decorator
-    dto.userId = req?.user?.userId;
-    return this.usersService.addIngredient(dto);
+  addIngredient(@GetUser('userId') userId: number, @Body(new ValidationPipe()) dto: AddIngredientDto) {
+    return this.usersService.addIngredient(userId, dto);
   }
 
   @Get('/getIngredients')
   @UseGuards(JwtGuard)
-  getIngredients(@Request() req, @Param('lang') lang = defaultLang) {
-    // TODO: use GetUser decorator
-    const userId = req?.user?.userId;
+  getIngredients(@GetUser('userId') userId: number, @Param('lang') lang = defaultLang) {
     return this.ingredientsRepository.getIngredientsByUserId(userId, lang);
   }
 
   @Delete('/removeIngredients')
   @UseGuards(JwtGuard)
-  removeIngredients(@Request() req, @Body() dto: RemoveIngredientsDto) {
-    // TODO: use GetUser decorator
-    dto.userId = req?.user?.userId;
-    return this.usersService.removeIngredients(dto);
+  removeIngredients(@GetUser('userId') userId: number, @Body(new ValidationPipe()) dto: RemoveIngredientsDto) {
+    return this.usersService.removeIngredients(userId, dto);
   }
 
   @Get('/myBar')
   @UseGuards(JwtGuard)
-  async myBar(@Request() req, @Param('lang') lang = defaultLang) {
-    // TODO: use GetUser decorator
-    const userId = req?.user?.userId;
+  async myBar(@GetUser('userId') userId: number, @Param('lang') lang = defaultLang) {
     return this.cocktailsRepository.getCocktailsFromMyIngredients(userId, lang);
   }
 }

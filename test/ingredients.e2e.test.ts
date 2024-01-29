@@ -6,20 +6,20 @@ import { mockIngredient } from './mocked-data';
 import { loginAdmin } from './helper';
 
 let token: string;
+let createdIngredientId: number;
 const ingredientsPath = 'ingredients';
 
 describe('Ingredients Controller (e2e)', () => {
   beforeAll(async () => {
-    const ingredientsService = app.get(IngredientsService);
-    await ingredientsService.ingredientsRepository.bulkCreate([
-      mockIngredient,
-      { ...mockIngredient, name: { en: 'test2', uk: 'тест2' } },
-    ]);
-
     token = await loginAdmin();
   });
 
-  // afterAll(async () => {});
+  afterAll(async () => {
+    const ingredientsService = app.get(IngredientsService);
+    await ingredientsService.ingredientsRepository.destroy({
+      where: { id: createdIngredientId },
+    });
+  });
 
   describe('Successfully cases', () => {
     it('Should get all ingredients with default lang(en)', async () => {
@@ -77,6 +77,7 @@ describe('Ingredients Controller (e2e)', () => {
         .send({ ...mockIngredient, name: { en: 'test3', uk: 'тест3' } })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
+          createdIngredientId = response.body.id;
           expect(response.body.name.en).toBe('test3');
         })
         .expect(HttpStatus.CREATED);
@@ -84,7 +85,7 @@ describe('Ingredients Controller (e2e)', () => {
 
     it('Should update ingredient', async () => {
       return request(app.getHttpServer())
-        .put(`/${ingredientsPath}/admin/3`)
+        .put(`/${ingredientsPath}/admin/${createdIngredientId}`)
         .send({ ...mockIngredient, name: { en: 'test33', uk: 'тест33' } })
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
