@@ -141,7 +141,7 @@ export class CocktailsService {
     }
   }
 
-  async getCocktailsFromMyIngredients(userId, lang) {
+  async getCocktailsFromMyIngredients(userId: number, lang: string) {
     const ingredientIds = await this.ingredientsRepository.getIngredientIdsByUserId(userId);
     if (!ingredientIds.length) return [];
 
@@ -154,7 +154,7 @@ export class CocktailsService {
         having count(*) = (
           select count(*)
           from ingredient_cocktails
-          where "cocktailId" = c.id
+          where "cocktailId" = c.id and "required" = true
         )`,
     );
     return myCocktails[0];
