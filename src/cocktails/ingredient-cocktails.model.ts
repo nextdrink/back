@@ -24,7 +24,7 @@ export class IngredientCocktails extends Model<IngredientCocktails> {
   @Column({ type: DataType.INTEGER, allowNull: false })
   ingredientId: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER })
   amount: number;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
