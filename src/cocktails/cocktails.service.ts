@@ -137,7 +137,7 @@ export class CocktailsService {
       if (ingredient) {
         const ingredientCocktails = await cocktail.$add('ingredients', id);
         await ingredientCocktails[0].update({ amount });
-      }
+      } else throw new Error(`Ingredient with id ${id} not found`);
     }
   }
 
