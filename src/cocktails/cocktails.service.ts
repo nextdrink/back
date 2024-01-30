@@ -67,7 +67,7 @@ export class CocktailsService {
           attributes: { exclude: ['createdAt', 'updatedAt'] },
           model: Ingredients,
           through: {
-            attributes: ['amount'],
+            attributes: ['amount', 'required'],
             as: 'value',
           },
         },
