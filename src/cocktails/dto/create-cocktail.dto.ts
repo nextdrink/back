@@ -1,10 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUrl } from 'class-validator';
+import { IngredientCocktail } from '../../common/interfaces/cocktail.interfaces';
 
-interface IngredientCocktail {
-  id: number;
-  amount: number;
-}
 // TODO: validate object fields
 export class CreateCocktailDto {
   @IsNotEmpty({ message: 'name field is empty' })
@@ -52,8 +49,8 @@ export class CreateCocktailDto {
 
   @ApiProperty({
     example: [
-      { id: 1, amount: 50 },
-      { id: 2, amount: 150 },
+      { id: 1, amount: 50, required: true },
+      { id: 2, amount: 150, required: false },
     ],
   })
   ingredients: IngredientCocktail[];

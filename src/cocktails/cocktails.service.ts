@@ -7,6 +7,7 @@ import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { Users } from '../users/users.model';
 import { Ingredients } from '../ingredients/ingredients.model';
 import { IngredientsService } from '../ingredients/ingredients.service';
+import { IngredientCocktail } from '../common/interfaces/cocktail.interfaces';
 
 @Injectable()
 export class CocktailsService {
@@ -75,7 +76,7 @@ export class CocktailsService {
     });
   }
 
-  async getCocktailsByUserId(id: number, lang) {
+  async getCocktailsByUserId(id: number, lang: string) {
     return await this.cocktailsRepository.findAll({
       attributes: {
         include: [
@@ -131,12 +132,12 @@ export class CocktailsService {
     return this.getCocktailById(id);
   }
 
-  async addIngredientForCocktail(cocktail, ingredients) {
-    for (const { id, amount } of ingredients) {
+  async addIngredientForCocktail(cocktail, ingredients: IngredientCocktail[]) {
+    for (const { id, amount, required } of ingredients) {
       const ingredient = await this.ingredientsRepository.getIngredientById(id);
       if (ingredient) {
         const ingredientCocktails = await cocktail.$add('ingredients', id);
-        await ingredientCocktails[0].update({ amount });
+        await ingredientCocktails[0].update({ amount, required });
       } else throw new Error(`Ingredient with id ${id} not found`);
     }
   }
