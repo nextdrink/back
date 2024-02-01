@@ -68,7 +68,7 @@ export class CocktailsService {
           attributes: { exclude: ['createdAt', 'updatedAt'] },
           model: Ingredients,
           through: {
-            attributes: ['amount', 'required'],
+            attributes: ['amount', 'required', 'unit'],
             as: 'value',
           },
         },
@@ -133,11 +133,11 @@ export class CocktailsService {
   }
 
   async addIngredientForCocktail(cocktail, ingredients: IngredientCocktail[]) {
-    for (const { id, amount, required } of ingredients) {
+    for (const { id, amount, required, unit } of ingredients) {
       const ingredient = await this.ingredientsRepository.getIngredientById(id);
       if (ingredient) {
         const ingredientCocktails = await cocktail.$add('ingredients', id);
-        await ingredientCocktails[0].update({ amount, required });
+        await ingredientCocktails[0].update({ amount, required, unit });
       } else throw new Error(`Ingredient with id ${id} not found`);
     }
   }

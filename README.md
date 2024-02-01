@@ -92,3 +92,6 @@ jest config from package.json:
 "coverageDirectory": "../coverage",
 "testEnvironment": "node"
 }
+
+##Migration
+npx sequelize-cli db:migrate
