@@ -91,8 +91,8 @@ export class CocktailsController {
     }
 
     // @ts-ignore
-    const ingredients = cocktail.ingredients.map(({ id, value: { amount, required } }) => {
-      return { id, amount, required };
+    const ingredients = cocktail.ingredients.map(({ id, value: { amount, required, unit } }) => {
+      return { id, amount, required, unit };
     });
 
     const cocktailModifiedIngredients = {

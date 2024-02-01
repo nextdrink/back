@@ -2,6 +2,11 @@ import { Model, DataType, Table, Column, ForeignKey } from 'sequelize-typescript
 import { Cocktails } from './cocktails.model';
 import { Ingredients } from '../ingredients/ingredients.model';
 
+export enum ingredientCocktailsUnitEnum {
+  g = 'g',
+  ml = 'ml',
+}
+
 @Table({
   tableName: 'ingredient_cocktails',
   createdAt: false,
@@ -29,4 +34,11 @@ export class IngredientCocktails extends Model<IngredientCocktails> {
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   required: boolean;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(ingredientCocktailsUnitEnum)),
+    allowNull: false,
+    defaultValue: ingredientCocktailsUnitEnum.ml,
+  })
+  unit: boolean;
 }
