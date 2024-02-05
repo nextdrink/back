@@ -39,9 +39,6 @@ export class CreateCocktailDto {
   @ApiProperty({ example: 'Classic' })
   readonly group: string;
 
-  @ApiProperty({ example: 'Negroni' })
-  readonly series: string;
-
   @ApiProperty({ example: 'Red' })
   readonly color: string;
 
