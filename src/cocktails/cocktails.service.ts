@@ -147,12 +147,12 @@ export class CocktailsService {
     if (!ingredientIds.length) return [];
 
     const myCocktails = await this.cocktailsRepository.sequelize.query(
-      `select c.id, c.name->'${lang}' as name, c.img
+      `select c.id, c.name->'${lang}' as name, c.img, c.strength, c.taste, c.base, c.group, c.color, c.method
         from cocktails c
         join ingredient_cocktails ic on c.id = ic."cocktailId" 
         where "ingredientId" IN (${ingredientIds.join()})
         group by c.id
-        having count(*) = (
+        having count(*) >= (
           select count(*)
           from ingredient_cocktails
           where "cocktailId" = c.id and "required" = true
