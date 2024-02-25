@@ -75,7 +75,6 @@ export class UsersController {
   @Get('/cocktail-check-like/:id')
   @UseGuards(JwtGuard)
   async isCocktailLiked(@GetUser('userId') userId: number, @Param('id') id) {
-    console.log(typeof id);
     return this.usersService.checkLikedCocktail(userId, id);
   }
 
