@@ -71,4 +71,17 @@ export class UsersController {
   async myBar(@GetUser('userId') userId: number, @Param('lang') lang = defaultLang) {
     return this.cocktailsRepository.getCocktailsFromMyIngredients(userId, lang);
   }
+
+  @Get('/cocktail-check-like/:id')
+  @UseGuards(JwtGuard)
+  async isCocktailLiked(@GetUser('userId') userId: number, @Param('id') id) {
+    console.log(typeof id);
+    return this.usersService.checkLikedCocktail(userId, id);
+  }
+
+  @Get('/ingredient-check-add/:id')
+  @UseGuards(JwtGuard)
+  async isIngredientAdded(@GetUser('userId') userId: number, @Param('id') id) {
+    return this.usersService.checkAddedIngredient(userId, id);
+  }
 }
