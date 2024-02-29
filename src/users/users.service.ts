@@ -104,4 +104,22 @@ export class UsersService {
     }
     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
+
+  async checkLikedCocktail(userId: number, cocktailId: number) {
+    const cocktail = await this.cocktailsRepository.getCocktailById(cocktailId);
+
+    if (cocktail) {
+      return await cocktail.$has('users', userId);
+    }
+    throw new HttpException('Cocktail not found', HttpStatus.NOT_FOUND);
+  }
+
+  async checkAddedIngredient(userId: number, ingredientId: number) {
+    const ingredient = await this.ingredientsRepository.getIngredientById(ingredientId);
+
+    if (ingredient) {
+      return await ingredient.$has('users', userId);
+    }
+    throw new HttpException('Ingredient not found', HttpStatus.NOT_FOUND);
+  }
 }
