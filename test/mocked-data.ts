@@ -41,8 +41,6 @@ export const mockCocktail = {
   strength: 'Alcohol',
   taste: 'sweet',
   base: 'Vodka',
-  group: 'Classic',
-  series: 'HZ',
   color: 'Orange',
   method: 'Mix build',
   ingredients: [

@@ -107,7 +107,7 @@ export class AuthService {
 
   private async generateToken(user) {
     const payload = { email: user.email, sub: user.id };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, { expiresIn: '30d' });
   }
 
   async validateUser({ email, password }): Promise<any> {

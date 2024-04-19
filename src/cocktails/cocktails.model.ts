@@ -13,8 +13,6 @@ interface CocktailCreationAttr {
   base: string;
   strength: string;
   taste: string;
-  group: string;
-  series: string;
   color: string;
   method: string;
 }
@@ -62,14 +60,6 @@ export class Cocktails extends Model<Cocktails, CocktailCreationAttr> {
   @ApiProperty({ example: 'Gin' })
   @Column({ type: DataType.STRING, allowNull: false })
   base: string;
-
-  @ApiProperty({ example: 'Classic' })
-  @Column({ type: DataType.STRING, allowNull: false })
-  group: string;
-
-  @ApiProperty({ example: 'Negroni' })
-  @Column({ type: DataType.STRING, allowNull: false })
-  series: string;
 
   @ApiProperty({ example: 'Red' })
   @Column({ type: DataType.STRING, allowNull: false })
