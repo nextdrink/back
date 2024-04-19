@@ -38,6 +38,20 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 --
+-- TOC entry 873 (class 1247 OID 49432)
+-- Name: enum_ingredient_cocktails_unit; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.enum_ingredient_cocktails_unit AS ENUM (
+    'g',
+    'ml'
+);
+
+
+ALTER TYPE public.enum_ingredient_cocktails_unit OWNER TO postgres;
+
+
+--
 -- TOC entry 839 (class 1247 OID 16387)
 -- Name: enum_users_status; Type: TYPE; Schema: public; Owner: postgres
 --
@@ -69,8 +83,6 @@ CREATE TABLE public.cocktails (
     strength character varying(255) NOT NULL,
     taste character varying(255) NOT NULL,
     base character varying(255) NOT NULL,
-    "group" character varying(255) NOT NULL,
-    series character varying(255) NOT NULL,
     color character varying(255) NOT NULL,
     method character varying(255) NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
@@ -114,7 +126,10 @@ CREATE TABLE public.ingredient_cocktails (
     id integer NOT NULL,
     "cocktailId" integer,
     "ingredientId" integer,
-    amount integer
+    amount integer,
+    required boolean DEFAULT true NOT NULL,
+    unit public.enum_ingredient_cocktails_unit DEFAULT 'ml'::public.enum_ingredient_cocktails_unit NOT NULL
+
 );
 
 
@@ -508,9 +523,9 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: cocktails; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.cocktails (id, name, description, recipe, img, strength, taste, base, "group", series, color, method, "createdAt", "updatedAt") FROM stdin;
-1	{"en": "test1", "uk": "тест1"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Classic	HZ	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
-2	{"en": "test2", "uk": "тест2"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Classic	HZ	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
+COPY public.cocktails (id, name, description, recipe, img, strength, taste, base, color, method, "createdAt", "updatedAt") FROM stdin;
+1	{"en": "test1", "uk": "тест1"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
+2	{"en": "test2", "uk": "тест2"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
 \.
 
 
@@ -520,8 +535,8 @@ COPY public.cocktails (id, name, description, recipe, img, strength, taste, base
 -- Data for Name: ingredient_cocktails; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ingredient_cocktails (id, "cocktailId", "ingredientId", amount) FROM stdin;
-7	1	1	50
+COPY public.ingredient_cocktails (id, "cocktailId", "ingredientId", amount, required) FROM stdin;
+7	1	1	50	true
 \.
 
 

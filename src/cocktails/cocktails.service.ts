@@ -40,8 +40,6 @@ export class CocktailsService {
         'strength',
         'taste',
         'base',
-        'group',
-        'series',
         'color',
         'method',
       ],
@@ -147,7 +145,7 @@ export class CocktailsService {
     if (!ingredientIds.length) return [];
 
     const myCocktails = await this.cocktailsRepository.sequelize.query(
-      `select c.id, c.name->'${lang}' as name, c.img, c.strength, c.taste, c.base, c.group, c.color, c.method
+      `select c.id, c.name->'${lang}' as name, c.img, c.strength, c.taste, c.base, c.color, c.method
         from cocktails c
         join ingredient_cocktails ic on c.id = ic."cocktailId" 
         where "ingredientId" IN (${ingredientIds.join()})
