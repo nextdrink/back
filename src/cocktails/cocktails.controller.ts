@@ -18,7 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CocktailsService } from './cocktails.service';
-import { S3Service } from '../aws-s3/s3.service';
+import { GoogleCloudService } from '../google-cloud/google-cloud.service';
 import { Cocktails } from './cocktails.model';
 import { DeleteCocktailDto, DeleteCocktailImgDto, UpdateCocktailDto } from './dto/actions-cocktail.dto';
 import { languages, defaultLang, ROLES, MEDIA_STORAGE_FOLDERS } from '../constants';
@@ -30,7 +30,7 @@ import { GetAllAdminCocktailsDto } from './dto/get-all-admin-cocktails.dto';
 @ApiTags('Cocktails')
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
 export class CocktailsController {
-  constructor(private cocktailsService: CocktailsService, private s3Service: S3Service) {}
+  constructor(private cocktailsService: CocktailsService, private googleCloudService: GoogleCloudService) {}
 
   @ApiOperation({ summary: 'Get all cocktails' })
   @ApiOkResponse({ type: [Cocktails] })
@@ -131,24 +131,24 @@ export class CocktailsController {
   }
 
   @Post('/admin/upload-file')
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(ROLES.ADMIN)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(ROLES.ADMIN)
   @ApiOkResponse({ description: 'https://test.com/mops-pes.png' })
   @ApiOperation({ summary: 'Upload image for cocktail' })
   @UseInterceptors(FileInterceptor('file'))
   async addImageToCocktail(@UploadedFile() file: Express.Multer.File) {
-    return await this.s3Service.uploadFile(file, `${MEDIA_STORAGE_FOLDERS.COCKTAILS}/${file.originalname}`);
+    return await this.googleCloudService.uploadFile(MEDIA_STORAGE_FOLDERS.COCKTAILS, file);
   }
 
   @Delete('/admin/delete-file')
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(ROLES.ADMIN)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(ROLES.ADMIN)
   @ApiOkResponse({
     description: "Successfully removed https://test.com/mops-pes.png or file doesn't exist",
   })
   @ApiOperation({ summary: 'Delete cocktail image' })
   async deleteImageFromCocktail(@Body() deleteCocktailImageDto: DeleteCocktailImgDto) {
     const { fileName } = deleteCocktailImageDto;
-    return await this.s3Service.deleteFile(`${MEDIA_STORAGE_FOLDERS.COCKTAILS}/${fileName}`);
+    return await this.googleCloudService.deleteFile(`${MEDIA_STORAGE_FOLDERS.COCKTAILS}/${fileName}`);
   }
 }

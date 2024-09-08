@@ -23,13 +23,13 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-import { S3Service } from '../aws-s3/s3.service';
+import { GoogleCloudService } from '../google-cloud/google-cloud.service';
 import { DeleteIngredientImgDto } from './dto/actions-ingredients.dto';
 
 @ApiTags('Ingredients')
 @Controller(`:lang(${languages.join('|')})?/ingredients`)
 export class IngredientsController {
-  constructor(private ingredientsService: IngredientsService, private s3Service: S3Service) {}
+  constructor(private ingredientsService: IngredientsService, private googleCloudService: GoogleCloudService) {}
 
   @ApiOperation({ summary: 'Get all ingredients' })
   @ApiOkResponse({ type: [Ingredients] })
@@ -122,7 +122,7 @@ export class IngredientsController {
   @ApiOperation({ summary: 'Upload image for ingredient' })
   @UseInterceptors(FileInterceptor('file'))
   async addImageToIngredient(@UploadedFile() file: Express.Multer.File) {
-    return await this.s3Service.uploadFile(file, `${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${file.originalname}`);
+    return await this.googleCloudService.uploadFile(MEDIA_STORAGE_FOLDERS.INGREDIENTS, file);
   }
 
   @Delete('/admin/delete-file')
@@ -134,6 +134,6 @@ export class IngredientsController {
   @ApiOperation({ summary: 'Delete ingredient image' })
   async deleteImageFromIngredient(@Body() deleteCocktailImageDto: DeleteIngredientImgDto) {
     const { fileName } = deleteCocktailImageDto;
-    return await this.s3Service.deleteFile(`${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${fileName}`);
+    return await this.googleCloudService.deleteFile(`${MEDIA_STORAGE_FOLDERS.INGREDIENTS}/${fileName}`);
   }
 }

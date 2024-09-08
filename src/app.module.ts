@@ -14,7 +14,7 @@ import { UserIngredients } from './ingredients/user-ingredients.model';
 import { RolesModule } from './roles/roles.module';
 import { Roles } from './roles/roles.model';
 import { UserRoles } from './roles/user-roles.model';
-import { AwsS3Module } from './aws-s3/s3.module';
+import { GoogleCloudModule } from './google-cloud/google-cloud.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './mail/mail.module';
 import { TokenModule } from './token/token.module';
@@ -48,7 +48,7 @@ import { TokenModule } from './token/token.module';
     IngredientsModule,
     AuthModule,
     RolesModule,
-    AwsS3Module,
+    GoogleCloudModule,
     MailModule,
     TokenModule,
   ],

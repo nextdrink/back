@@ -6,7 +6,7 @@ services:
     build:
       context: ..
     env_file:
-      - ../.development.env
+      - ../..development.env
     volumes:
       - .:/app
       - /app/node_modules
@@ -21,7 +21,7 @@ services:
     container_name: postgres
     image: postgres:14.3-alpine
     env_file:
-      - ../.development.env
+      - ../..development.env
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
