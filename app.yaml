@@ -24,6 +24,7 @@ env_variables:
   MAILGUN_API_DOMAIN: $MAILGUN_API_DOMAIN
   FE_APP_URL: https://dev.nextdrink.me
   JS_CODE_MAIL: test@mybetwer.com
+  BUCKET_NAME: next-drink-content
 
 build_env_variables:
   NODE_ENV: "production"
@@ -38,3 +39,4 @@ build_env_variables:
   MAILGUN_API_DOMAIN: $MAILGUN_API_DOMAIN
   FE_APP_URL: https://dev.nextdrink.me
   JS_CODE_MAIL: test@mybetwer.com
+  BUCKET_NAME: next-drink-content
