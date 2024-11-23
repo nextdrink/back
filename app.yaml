@@ -40,3 +40,4 @@ build_env_variables:
   FE_APP_URL: https://dev.nextdrink.me
   JS_CODE_MAIL: test@mybetwer.com
   BUCKET_NAME: next-drink-content
+
