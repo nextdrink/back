@@ -144,18 +144,35 @@ export class CocktailsService {
     const ingredientIds = await this.ingredientsRepository.getIngredientIdsByUserId(userId);
     if (!ingredientIds.length) return [];
 
-    const myCocktails = await this.cocktailsRepository.sequelize.query(
+    const [myCocktails] = await this.cocktailsRepository.sequelize.query(
       `select c.id, c.name->'${lang}' as name, c.img, c.strength, c.taste, c.base, c.color, c.method
         from cocktails c
         join ingredient_cocktails ic on c.id = ic."cocktailId" 
         where "ingredientId" IN (${ingredientIds.join()})
         group by c.id
-        having count(*) >= (
-          select count(*)
-          from ingredient_cocktails
-          where "cocktailId" = c.id and "required" = true
-        )`,
+        having count(*) = (select count(*) from ingredient_cocktails where "cocktailId" = c.id)`,
     );
-    return myCocktails[0];
+
+    const requiredIngredientsForCocktails = await this.getRequiredIngredientsForCocktails(myCocktails);
+
+    return myCocktails.filter(({ id }) => {
+      const [ids] = requiredIngredientsForCocktails.filter(({ cocktailId }) => cocktailId === id);
+      return ids.requiredIngredientsIds.every(({ ingredientId }) => ingredientIds.join().includes(ingredientId));
+    });
+  }
+
+  async getRequiredIngredientsForCocktails(myCocktails) {
+    // TODO refactored to ORM;
+    return Promise.all(
+      myCocktails.map(async ({ id }) => {
+        const [res] = await this.cocktailsRepository.sequelize.query(
+          `select "ingredientId" from ingredient_cocktails c where "cocktailId" = ${id} and "required" = true`,
+        );
+        return {
+          cocktailId: id,
+          requiredIngredientsIds: res,
+        };
+      }),
+    );
   }
 }
