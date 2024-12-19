@@ -150,7 +150,11 @@ export class CocktailsService {
         join ingredient_cocktails ic on c.id = ic."cocktailId" 
         where "ingredientId" IN (${ingredientIds.join()})
         group by c.id
-        having count(*) = (select count(*) from ingredient_cocktails where "cocktailId" = c.id)`,
+        having count(*) >= (
+          select count(*)
+          from ingredient_cocktails
+          where "cocktailId" = c.id and "required" = true
+        )`,
     );
 
     const requiredIngredientsForCocktails = await this.getRequiredIngredientsForCocktails(myCocktails);
