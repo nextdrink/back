@@ -26,37 +26,37 @@ jobs:
     - run: npm ci
     - run: npm run build
 
-  deploy:
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ 18.x ]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build
-    - uses: 73h/gae-app-yaml-replace-env-variables@v0.3
-      env:
-        DBHOST: ${{ secrets.DBHOST }}
-        DBPASS: ${{ secrets.DBPASS }}
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
-        MAILGUN_API_DOMAIN: ${{ secrets.MAILGUN_API_DOMAIN }}
-      with:
-        app_yaml_path: "app.yaml"
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: '${{ secrets.GCP_DEPLOYER_SA }}'
-
-    - id: 'deploy-to-dev'
-      uses: 'google-github-actions/deploy-appengine@v1'
-      with:
-        project_id: "nextdrink-dev"
+#  deploy:
+#    if: github.ref == 'refs/heads/master'
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        node-version: [ 18.x ]
+#    steps:
+#    - uses: actions/checkout@v3
+#    - name: Use Node.js ${{ matrix.node-version }}
+#      uses: actions/setup-node@v3
+#      with:
+#        node-version: ${{ matrix.node-version }}
+#        cache: 'npm'
+#    - run: npm ci
+#    - run: npm run build
+#    - uses: 73h/gae-app-yaml-replace-env-variables@v0.3
+#      env:
+#        DBHOST: ${{ secrets.DBHOST }}
+#        DBPASS: ${{ secrets.DBPASS }}
+#        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+#        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+#        MAILGUN_API_DOMAIN: ${{ secrets.MAILGUN_API_DOMAIN }}
+#      with:
+#        app_yaml_path: "app.yaml"
+#    - id: 'auth'
+#      name: 'Authenticate to Google Cloud'
+#      uses: 'google-github-actions/auth@v1'
+#      with:
+#        credentials_json: '${{ secrets.GCP_DEPLOYER_SA }}'
+#
+#    - id: 'deploy-to-dev'
+#      uses: 'google-github-actions/deploy-appengine@v1'
+#      with:
+#        project_id: "nextdrink-dev"
