@@ -9,14 +9,14 @@ import { Ingredients } from '../ingredients/ingredients.model';
 import { IngredientCocktails } from './ingredient-cocktails.model';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { UsersModule } from '../users/users.module';
-import { GoogleCloudModule } from '../google-cloud/google-cloud.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   providers: [CocktailsService],
   controllers: [CocktailsController],
   imports: [
     IngredientsModule,
-    GoogleCloudModule,
+    CloudinaryModule,
     SequelizeModule.forFeature([Cocktails, Users, UserCocktails, Ingredients, IngredientCocktails]),
     forwardRef(() => UsersModule),
   ],

@@ -7,13 +7,13 @@ import { Ingredients } from './ingredients.model';
 import { IngredientCocktails } from '../cocktails/ingredient-cocktails.model';
 import { UserIngredients } from './user-ingredients.model';
 import { UsersModule } from '../users/users.module';
-import { GoogleCloudModule } from '../google-cloud/google-cloud.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   controllers: [IngredientsController],
   providers: [IngredientsService],
   imports: [
-    GoogleCloudModule,
+    CloudinaryModule,
     SequelizeModule.forFeature([Ingredients, Cocktails, IngredientCocktails, UserIngredients]),
     forwardRef(() => UsersModule),
   ],
