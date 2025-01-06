@@ -26,6 +26,7 @@ import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import { GetAllAdminCocktailsDto } from './dto/get-all-admin-cocktails.dto';
+import { IngredientCocktailFromDb } from '../common/interfaces/cocktail.interfaces';
 
 @ApiTags('Cocktails')
 @Controller(`:lang(${languages.join('|')})?/cocktails`)
@@ -52,10 +53,19 @@ export class CocktailsController {
 
     const { name, description, recipe, ingredients } = cocktail;
 
-    const ingredientsOneLang = ingredients.map((ingredient) => {
-      const { name, description } = ingredient;
-      return { ...ingredient, name: name[lang], description: description[lang] };
-    });
+    const ingredientsOneLang = ingredients
+      .map((ingredient) => {
+        // @ts-ignore
+        const {
+          name,
+          description,
+          value: { amount, required, unit },
+        }: IngredientCocktailFromDb = ingredient;
+        return { id: ingredient.id, amount, required, unit, name: name[lang], description: description[lang] };
+      })
+      .sort((a, b) => (a.required === b.required ? 0 : a.required ? -1 : 1));
+
+    console.log(ingredientsOneLang);
 
     const cocktailOneLang = {
       ...cocktail,
