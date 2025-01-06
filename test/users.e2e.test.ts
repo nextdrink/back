@@ -9,6 +9,11 @@ let userToken: string;
 const usersPath = 'users';
 const cocktailId = 1;
 const ingredientId = 1;
+const ginIngredientId = 3;
+const tonicIngredientId = 4;
+const iceCubesIngredientId = 5;
+const limeIngredientId = 6;
+const ginTonicCocktailId = 3;
 
 describe('users Controller (e2e)', () => {
   beforeAll(async () => {
@@ -80,6 +85,16 @@ describe('users Controller (e2e)', () => {
         .expect(HttpStatus.OK);
     });
 
+    it('Should get my bar with cocktail with one non-required cocktail', async () => {
+      return request(app.getHttpServer())
+        .get(`/${usersPath}/myBar`)
+        .set('Authorization', 'Bearer ' + userToken)
+        .expect((response: request.Response) => {
+          expect(response.body.length).toBe(cocktailId);
+        })
+        .expect(HttpStatus.OK);
+    });
+
     describe('Removed cases', () => {
       it('Should remove favorite cocktail', async () => {
         return request(app.getHttpServer())
@@ -99,6 +114,80 @@ describe('users Controller (e2e)', () => {
           .set('Authorization', 'Bearer ' + userToken)
           .expect((response: request.Response) => {
             expect(response.body.ingredientsId.length).toBe(1);
+          })
+          .expect(HttpStatus.OK);
+      });
+    });
+
+    describe('My bar detail tests', () => {
+      it('Should return cocktail with all ingredients', async () => {
+        await request(app.getHttpServer())
+          .post(`/${usersPath}/addIngredient`)
+          .send({ ingredientId: ginIngredientId })
+          .set('Authorization', 'Bearer ' + userToken);
+        await request(app.getHttpServer())
+          .post(`/${usersPath}/addIngredient`)
+          .send({ ingredientId: tonicIngredientId })
+          .set('Authorization', 'Bearer ' + userToken);
+        await request(app.getHttpServer())
+          .post(`/${usersPath}/addIngredient`)
+          .send({ ingredientId: iceCubesIngredientId })
+          .set('Authorization', 'Bearer ' + userToken);
+        await request(app.getHttpServer())
+          .post(`/${usersPath}/addIngredient`)
+          .send({ ingredientId: limeIngredientId })
+          .set('Authorization', 'Bearer ' + userToken);
+
+        return request(app.getHttpServer())
+          .get(`/${usersPath}/myBar`)
+          .set('Authorization', 'Bearer ' + userToken)
+          .expect((response: request.Response) => {
+            expect(response.body[0].id).toBe(ginTonicCocktailId);
+          })
+          .expect(HttpStatus.OK);
+      });
+
+      it('Should return cocktail without one unnecessary ingredient', async () => {
+        await request(app.getHttpServer())
+          .delete(`/${usersPath}/removeIngredients`)
+          .send({ ingredientId: [limeIngredientId] })
+          .set('Authorization', 'Bearer ' + userToken);
+
+        return request(app.getHttpServer())
+          .get(`/${usersPath}/myBar`)
+          .set('Authorization', 'Bearer ' + userToken)
+          .expect((response: request.Response) => {
+            expect(response.body[0].id).toBe(ginTonicCocktailId);
+          })
+          .expect(HttpStatus.OK);
+      });
+
+      it('Should not return cocktail with one necessary ingredient', async () => {
+        await request(app.getHttpServer())
+          .delete(`/${usersPath}/removeIngredients`)
+          .send({ ingredientsId: [iceCubesIngredientId] })
+          .set('Authorization', 'Bearer ' + userToken);
+
+        return request(app.getHttpServer())
+          .get(`/${usersPath}/myBar`)
+          .set('Authorization', 'Bearer ' + userToken)
+          .expect((response: request.Response) => {
+            expect(response.body.length).toBe(0);
+          })
+          .expect(HttpStatus.OK);
+      });
+
+      it('Should not return cocktail with one necessary ingredient', async () => {
+        await request(app.getHttpServer())
+          .delete(`/${usersPath}/removeIngredients`)
+          .send({ ingredientsId: [iceCubesIngredientId] })
+          .set('Authorization', 'Bearer ' + userToken);
+
+        return request(app.getHttpServer())
+          .get(`/${usersPath}/myBar`)
+          .set('Authorization', 'Bearer ' + userToken)
+          .expect((response: request.Response) => {
+            expect(response.body.length).toBe(0);
           })
           .expect(HttpStatus.OK);
       });

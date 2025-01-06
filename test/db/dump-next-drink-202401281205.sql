@@ -526,6 +526,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 COPY public.cocktails (id, name, description, recipe, img, strength, taste, base, color, method, "createdAt", "updatedAt") FROM stdin;
 1	{"en": "test1", "uk": "тест1"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
 2	{"en": "test2", "uk": "тест2"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
+3	{"en": "gin tonic", "uk": "тест2"}	{"en": "Famous cockta", "uk": "Відомий коктей"}	{"en": {"1": "Fill collins with ice cubes to the top", "2": "Pour 50 ml of vodka"}, "uk": {"1": "Наповни колінз кубиками льоду догори", "2": "Налий горілку 50 мл"}}	http://sdfasdf.com	Alcohol	sweet	Vodka	Orange	Mix build	2024-01-27 17:03:23.433+00	2024-01-27 17:03:23.433+00
 \.
 
 
@@ -537,6 +538,10 @@ COPY public.cocktails (id, name, description, recipe, img, strength, taste, base
 
 COPY public.ingredient_cocktails (id, "cocktailId", "ingredientId", amount, required) FROM stdin;
 7	1	1	50	true
+1	3	3	50	true
+2	3	4	50	true
+3	3	5	50	true
+4	3	6	50	false
 \.
 
 
@@ -549,6 +554,10 @@ COPY public.ingredient_cocktails (id, "cocktailId", "ingredientId", amount, requ
 COPY public.ingredients (id, name, description, img, strength, base, taste, "createdAt", "updatedAt") FROM stdin;
 1	{"en": "Whisky43", "uk": "Віскі"}	{"en": "Classik alko", "uk": "Класичний алкоголь"}	https://iasd3efk.images.com	alcohol	grain	sweet	2024-01-27 17:03:29.938+00	2024-01-27 17:03:29.938+00
 2	{"en": "test2", "uk": "тест2"}	{"en": "Classik alko", "uk": "Класичний алкоголь"}	https://iasd3efk.images.com	alcohol	grain	sweet	2024-01-27 17:03:29.938+00	2024-01-27 17:03:29.938+00
+3	{"en": "gin", "uk": "тест2"}	{"en": "Classik alko", "uk": "Класичний алкоголь"}	https://iasd3efk.images.com	alcohol	grain	sweet	2024-01-27 17:03:29.938+00	2024-01-27 17:03:29.938+00
+4	{"en": "tonic", "uk": "тест2"}	{"en": "Classik alko", "uk": "Класичний алкоголь"}	https://iasd3efk.images.com	alcohol	grain	sweet	2024-01-27 17:03:29.938+00	2024-01-27 17:03:29.938+00
+5	{"en": "ice cubes", "uk": "тест2"}	{"en": "Classik alko", "uk": "Класичний алкоголь"}	https://iasd3efk.images.com	alcohol	grain	sweet	2024-01-27 17:03:29.938+00	2024-01-27 17:03:29.938+00
+6	{"en": "lime", "uk": "тест2"}	{"en": "Classik alko", "uk": "Класичний алкоголь"}	https://iasd3efk.images.com	alcohol	grain	sweet	2024-01-27 17:03:29.938+00	2024-01-27 17:03:29.938+00
 \.
 
 
