@@ -26,7 +26,7 @@ describe('Ingredients Controller (e2e)', () => {
       return request(app.getHttpServer())
         .get(`/${ingredientsPath}`)
         .expect((response: request.Response) => {
-          expect(response.body.length).toBe(2);
+          expect(response.body.length).toBe(6);
           expect(response.body[0].name).toBe(mockIngredient.name.en);
         })
         .expect(HttpStatus.OK);
@@ -36,7 +36,7 @@ describe('Ingredients Controller (e2e)', () => {
       return request(app.getHttpServer())
         .get(`/uk/${ingredientsPath}`)
         .expect((response: request.Response) => {
-          expect(response.body.length).toBe(2);
+          expect(response.body.length).toBe(6);
           expect(response.body[0].name).toBe(mockIngredient.name.uk);
         })
         .expect(HttpStatus.OK);
@@ -56,7 +56,7 @@ describe('Ingredients Controller (e2e)', () => {
         .get(`/${ingredientsPath}/admin/all`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
-          expect(response.body.length).toBe(2);
+          expect(response.body.length).toBe(6);
         })
         .expect(HttpStatus.OK);
     });
@@ -96,7 +96,7 @@ describe('Ingredients Controller (e2e)', () => {
 
     it('Should delete ingredient', async () => {
       return request(app.getHttpServer())
-        .delete(`/${ingredientsPath}/admin/id/3`)
+        .delete(`/${ingredientsPath}/admin/id/${createdIngredientId}`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           console.log(response.body, 'response.body');

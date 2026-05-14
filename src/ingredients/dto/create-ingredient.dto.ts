@@ -32,7 +32,7 @@ export class CreateIngredientDto {
   @ApiProperty({ example: 'Cherry' })
   readonly base: string;
 
-  @IsNotEmpty({ message: 'taste field is empty' })
+  // @IsNotEmpty({ message: 'taste field is empty' })
   @ApiProperty({ example: 'Bitter' })
-  readonly taste: string;
+  readonly taste: string = null;
 }

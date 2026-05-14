@@ -25,7 +25,7 @@ describe('Cocktails Controller (e2e)', () => {
       return request(app.getHttpServer())
         .get(`/${cocktailsPath}`)
         .expect((response: request.Response) => {
-          expect(response.body.length).toBe(2);
+          expect(response.body.length).toBe(3);
           expect(response.body[0].name).toBe(mockCocktail.name.en);
         })
         .expect(HttpStatus.OK);
@@ -35,7 +35,7 @@ describe('Cocktails Controller (e2e)', () => {
       return request(app.getHttpServer())
         .get(`/uk/${cocktailsPath}`)
         .expect((response: request.Response) => {
-          expect(response.body.length).toBe(2);
+          expect(response.body.length).toBe(3);
           expect(response.body[0].name).toBe(mockCocktail.name.uk);
         })
         .expect(HttpStatus.OK);
@@ -55,7 +55,7 @@ describe('Cocktails Controller (e2e)', () => {
         .get(`/${cocktailsPath}/admin/all`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
-          expect(response.body.length).toBe(2);
+          expect(response.body.length).toBe(3);
         })
         .expect(HttpStatus.OK);
     });
@@ -95,7 +95,7 @@ describe('Cocktails Controller (e2e)', () => {
 
     it('Should delete cocktail', async () => {
       return request(app.getHttpServer())
-        .delete(`/${cocktailsPath}/admin/id/3`)
+        .delete(`/${cocktailsPath}/admin/id/${createdCocktailId}`)
         .set('Authorization', 'Bearer ' + token)
         .expect((response: request.Response) => {
           console.log(response.body, 'response.body');
